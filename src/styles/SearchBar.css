@@ -1,0 +1,19 @@
+.search-bar {
+  display: flex;
+  align-items: center;
+}
+
+.search-bar__searchIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.search-bar__searchInput {
+  width: 100%;
+  outline: none;
+  font-size: 1rem;
+}
+
+.search-bar .MuiSvgIcon-root {
+  color: rgb(60, 60, 60);
+}

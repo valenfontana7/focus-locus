@@ -1,0 +1,6 @@
+.list__container {
+  height: 100%;
+  max-height: 45vh;
+  overflow-y: auto;
+  padding-bottom: 1rem;
+}

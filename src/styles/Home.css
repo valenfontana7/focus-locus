@@ -1,6 +1,6 @@
 .home {
-  width: calc(100vw - 4rem);
-  height: calc(100vh - 12rem);
+  width: calc(100vw - 3rem);
+  height: calc(100vh - 9rem);
   display: flex;
   flex-direction: column;
   box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.1);

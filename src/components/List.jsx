@@ -6,8 +6,10 @@ import { useDroppable } from "@dnd-kit/core";
  * @param {string} title - Título de la lista.
  * @param {Array} items - Array de tareas (cada una con nombre, id y opcionalmente expira).
  * @param {boolean} showExpira - Si debe mostrar la fecha de expiración.
+ * @param {function} onRename - Función para renombrar una tarea (id, nuevoNombre)
+ * @param {function} onDelete - Función para eliminar una tarea (id)
  */
-function List({ title, items, showExpira }) {
+function List({ title, items, showExpira, onRename, onDelete }) {
   // Droppable para la lista completa
   const { isOver: isOverList, setNodeRef: setListNodeRef } = useDroppable({
     id: `list-${title}`,
@@ -23,16 +25,22 @@ function List({ title, items, showExpira }) {
     <div
       ref={setListNodeRef}
       style={style}
-      className="bg-white rounded-lg shadow p-4 flex-1"
+      className="list-container bg-white rounded-lg shadow p-4 flex-1"
     >
       <h3 className="text-xl font-bold mb-4">{title}</h3>
-      <ul className="space-y-4">
+      <ul className="list__container space-y-4">
         {items.map((tarea) => (
           <li key={tarea.id}>
             <Task
               id={tarea.id}
               nombre={tarea.nombre}
               expira={showExpira ? tarea.expira : undefined}
+              onRename={
+                onRename
+                  ? (nuevoNombre) => onRename(tarea.id, nuevoNombre)
+                  : undefined
+              }
+              onDelete={onDelete ? () => onDelete(tarea.id) : undefined}
             />
           </li>
         ))}

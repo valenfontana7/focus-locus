@@ -5,6 +5,7 @@ import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import DescriptionIcon from "@mui/icons-material/Description";
 import { formatearFechaPersonalizada } from "../utils/dateUtils";
+import Button from "./Button";
 
 function TaskEditModal({ open, onClose, task, onSave }) {
   const [formData, setFormData] = useState({
@@ -68,19 +69,16 @@ function TaskEditModal({ open, onClose, task, onSave }) {
       title="Editar Tarea"
       actions={
         <>
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
-          >
+          <Button variant="cancel" onClick={onClose} className="mr-2">
             Cancelar
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="primary"
             onClick={handleSave}
             disabled={!formData.nombre.trim()}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             Guardar
-          </button>
+          </Button>
         </>
       }
     >
@@ -164,22 +162,18 @@ function TaskEditModal({ open, onClose, task, onSave }) {
                 color: "bg-red-100 text-red-800",
               },
             ].map((option) => (
-              <button
+              <Button
                 key={option.value}
+                variant="secondary"
                 onClick={() => handleInputChange("prioridad", option.value)}
-                className={`
-                  p-2 rounded-lg border transition-all
-                  ${
-                    formData.prioridad === option.value
-                      ? `${option.color} border-current`
-                      : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100"
-                  }
-                `}
+                className={`w-full p-2 border transition-all text-sm font-medium ${
+                  formData.prioridad === option.value
+                    ? option.color + " border-current ring-2 ring-black/20"
+                    : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100"
+                }`}
               >
-                <div className="flex items-center justify-center">
-                  <span className="text-sm font-medium">{option.label}</span>
-                </div>
-              </button>
+                {option.label}
+              </Button>
             ))}
           </div>
         </div>

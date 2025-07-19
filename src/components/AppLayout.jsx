@@ -3,6 +3,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import HelpOutlineSharpIcon from "@mui/icons-material/HelpOutlineSharp";
 import { Link } from "react-router-dom";
 import Modal from "./Modal";
+import Button from "./Button";
 
 function AppLayout({ children }) {
   const [aboutOpen, setAboutOpen] = useState(false);
@@ -14,14 +15,14 @@ function AppLayout({ children }) {
           FocusLocus
         </h1>
         <nav className="flex items-center justify-center">
-          <button
-            type="button"
-            className="mx-1 sm:mx-2 md:mx-3 lg:mx-4 text-black-500 hover:underline focus:outline-none"
+          <Button
+            variant="secondary"
+            className="mx-1 sm:mx-2 md:mx-3 lg:mx-4 p-2 min-w-0 min-h-0 flex items-center justify-center"
             onClick={() => setAboutOpen(true)}
             title="¿Qué es FocusLocus?"
           >
             <HelpOutlineSharpIcon />
-          </button>
+          </Button>
           <Link
             to="#"
             className="mx-1 sm:mx-2 md:mx-3 lg:mx-4 text-black-500 hover:underline"
@@ -36,12 +37,9 @@ function AppLayout({ children }) {
         onClose={() => setAboutOpen(false)}
         title="¿Qué es FocusLocus?"
         actions={
-          <button
-            onClick={() => setAboutOpen(false)}
-            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
-          >
+          <Button variant="cancel" onClick={() => setAboutOpen(false)}>
             Cerrar
-          </button>
+          </Button>
         }
       >
         <div className="space-y-2">

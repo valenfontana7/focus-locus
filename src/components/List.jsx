@@ -4,6 +4,7 @@ import { useDroppable } from "@dnd-kit/core";
 import Modal from "./Modal";
 import TaskEditModal from "./TaskEditModal";
 import { TaskActionContext } from "../context/TaskActionContext";
+import Button from "./Button";
 /**
  * Componente para renderizar una lista de tareas.
  * @param {string} title - Título de la lista.
@@ -164,20 +165,18 @@ function List({ title, items, showExpira, onRename, onDelete }) {
           title="¿Eliminar tarea?"
           actions={
             <>
-              <button
+              <Button
+                variant="cancel"
                 onClick={() =>
                   setDeleteModal({ open: false, taskId: null, taskName: "" })
                 }
-                className="px-4 py-2 bg-gray-200 rounded"
+                className="mr-2"
               >
                 Cancelar
-              </button>
-              <button
-                onClick={handleConfirmDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded"
-              >
+              </Button>
+              <Button variant="danger" onClick={handleConfirmDelete}>
                 Eliminar
-              </button>
+              </Button>
             </>
           }
         >

@@ -4,6 +4,7 @@ import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { formatearFechaPersonalizada } from "../utils/dateUtils";
 import { createPortal } from "react-dom";
+import Button from "./Button";
 
 /**
  * Componente para renderizar una tarea individual.
@@ -180,7 +181,9 @@ function Task({
                   left: menuPosition.left,
                 }}
               >
-                <button
+                <Button
+                  variant="secondary"
+                  className="block w-full text-left px-5 py-3 text-lg rounded-t-lg"
                   onClick={() => {
                     setOpen(false);
                     setTimeout(() => {
@@ -197,11 +200,12 @@ function Task({
                       );
                     }, 0);
                   }}
-                  className="block w-full text-left px-5 py-3 text-lg text-gray-800 hover:bg-gray-100 rounded-t-lg transition-colors"
                 >
                   ✏️ Editar
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="danger"
+                  className="block w-full text-left px-5 py-3 text-lg rounded-b-lg"
                   onClick={() => {
                     setOpen(false);
                     setTimeout(() => {
@@ -218,10 +222,9 @@ function Task({
                       );
                     }, 0);
                   }}
-                  className="block w-full text-left px-5 py-3 text-lg text-red-600 hover:bg-red-100 rounded-b-lg transition-colors"
                 >
                   🗑️ Eliminar
-                </button>
+                </Button>
               </div>,
               document.body
             )}

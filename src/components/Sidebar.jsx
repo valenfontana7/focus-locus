@@ -202,21 +202,22 @@ function Sidebar({ search, onClose }) {
             title="Nuevo proyecto"
             actions={
               <>
-                <button
+                <Button
+                  variant="cancel"
                   onClick={() =>
                     setCreateModal({ open: false, projectName: "" })
                   }
-                  className="px-4 py-2 bg-gray-200 rounded"
+                  className="mr-2"
                 >
                   Cancelar
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="primary"
                   onClick={handleConfirmCreate}
-                  className="px-4 py-2 bg-blue-600 text-white rounded"
                   disabled={!createModal.projectName.trim()}
                 >
                   Crear
-                </button>
+                </Button>
               </>
             }
           >
@@ -245,18 +246,16 @@ function Sidebar({ search, onClose }) {
         title="¿Eliminar proyecto?"
         actions={
           <>
-            <button
+            <Button
+              variant="cancel"
               onClick={() => setDeleteModal({ open: false, projectName: "" })}
-              className="px-4 py-2 bg-gray-200 rounded"
+              className="mr-2"
             >
               Cancelar
-            </button>
-            <button
-              onClick={handleConfirmDelete}
-              className="px-4 py-2 bg-red-600 text-white rounded"
-            >
+            </Button>
+            <Button variant="danger" onClick={handleConfirmDelete}>
               Eliminar
-            </button>
+            </Button>
           </>
         }
       >

@@ -19,13 +19,14 @@ function ProjectItem({ projectName, onDelete, onClick, isActive, color }) {
         ></span>
         <span className="flex items-center">{projectName}</span>
       </div>
-      {isHovered && onDelete && (
+      {onDelete && (
         <button
           onClick={(e) => {
             e.stopPropagation();
             onDelete();
           }}
-          className="text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
+          className="text-red-500 hover:text-red-700 transition-opacity opacity-100 lg:opacity-0 lg:group-hover:opacity-100 lg:group-hover:visible visible lg:invisible"
+          style={{ pointerEvents: "auto" }}
           title="Eliminar proyecto"
         >
           🗑️

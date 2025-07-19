@@ -6,63 +6,59 @@ function withId(arr) {
 }
 
 // Crear estructura inicial de tareas para un proyecto
-export const createInitialTaskLists = () => ({
-  pendientes: withId([
-    { nombre: "Diseñar landing", expira: "2024-06-20" },
-    { nombre: "Reunión con cliente", expira: "2024-06-22" },
-  ]),
-  enCurso: withId([{ nombre: "Desarrollar backend", expira: "2024-06-25" }]),
-  terminadas: withId([
-    { nombre: "Wireframes aprobados" },
-    { nombre: "Dominio comprado" },
-  ]),
-});
-
-// Constantes fuera del hook
-export const initialProjects = ["Freelance Web", "Tesis", "Personal"];
-export const initialProjectTasks = {
-  "Freelance Web": {
-    pendientes: [
-      { id: "fw-1", nombre: "Diseñar landing", expira: "2024-06-20" },
-      { id: "fw-2", nombre: "Reunión con cliente", expira: "2024-06-22" },
-    ],
-    enCurso: [
-      { id: "fw-3", nombre: "Desarrollar backend", expira: "2024-06-25" },
-    ],
-    terminadas: [
-      { id: "fw-4", nombre: "Wireframes aprobados" },
-      { id: "fw-5", nombre: "Dominio comprado" },
-    ],
-  },
-  Tesis: {
-    pendientes: [
-      { id: "te-1", nombre: "Revisión bibliográfica", expira: "2024-07-01" },
-    ],
-    enCurso: [
-      { id: "te-2", nombre: "Redacción capítulo 1", expira: "2024-07-10" },
-    ],
-    terminadas: [{ id: "te-3", nombre: "Propuesta aprobada" }],
-  },
-  Personal: {
-    pendientes: [
-      { id: "pe-1", nombre: "Comprar libros", expira: "2024-06-30" },
-    ],
-    enCurso: [],
-    terminadas: [{ id: "pe-2", nombre: "Renovar DNI" }],
-  },
+export const createInitialTaskLists = (projectName) => {
+  if (projectName === "Mi Primer Proyecto") {
+    return {
+      pendientes: withId([
+        {
+          nombre: "¡Bienvenido a FocusLocus!",
+          expira: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+            .toISOString()
+            .split("T")[0],
+          prioridad: "baja",
+          descripcion:
+            "Esta es tu primera tarea. Puedes editarla, moverla entre listas o eliminarla.",
+        },
+      ]),
+      enCurso: [],
+      terminadas: [],
+    };
+  } else {
+    return {
+      pendientes: [],
+      enCurso: [],
+      terminadas: [],
+    };
+  }
 };
 
 function useProjects() {
   // Estado de proyectos
-  const [projects, setProjects] = useLocalStorage(
-    "focusLocusProjects",
-    initialProjects
-  );
+  const [projects, setProjects] = useLocalStorage("focusLocusProjects", [
+    "Mi Primer Proyecto",
+  ]);
 
   // Estado de tareas por proyecto
   const [projectTasks, setProjectTasks] = useLocalStorage(
     "focusLocusProjectTasks",
-    initialProjectTasks
+    {
+      "Mi Primer Proyecto": {
+        pendientes: [
+          {
+            id: "welcome-1",
+            nombre: "¡Bienvenido a FocusLocus!",
+            expira: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+              .toISOString()
+              .split("T")[0],
+            prioridad: "baja",
+            descripcion:
+              "Esta es tu primera tarea. Puedes editarla, moverla entre listas o eliminarla.",
+          },
+        ],
+        enCurso: [],
+        terminadas: [],
+      },
+    }
   );
 
   // Función para agregar un nuevo proyecto
@@ -78,7 +74,7 @@ function useProjects() {
         if (prevTasks[trimmedName]) return prevTasks;
         return {
           ...prevTasks,
-          [trimmedName]: createInitialTaskLists(),
+          [trimmedName]: createInitialTaskLists(trimmedName),
         };
       });
     }
@@ -102,7 +98,7 @@ function useProjects() {
     if (Object.prototype.hasOwnProperty.call(projectTasks, projectName)) {
       return projectTasks[projectName];
     }
-    return createInitialTaskLists();
+    return createInitialTaskLists(projectName);
   };
 
   // Función para actualizar las tareas de un proyecto
@@ -121,6 +117,8 @@ function useProjects() {
       expira: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
         .toISOString()
         .split("T")[0],
+      prioridad: "normal",
+      descripcion: "",
     };
     setProjectTasks((prevTasks) => {
       const currentTasks = prevTasks[projectName] || createInitialTaskLists();
@@ -136,7 +134,7 @@ function useProjects() {
 
   // Función para limpiar todas las tareas de un proyecto
   const clearProjectTasks = (projectName) => {
-    updateProjectTasks(projectName, createInitialTaskLists());
+    updateProjectTasks(projectName, createInitialTaskLists(projectName));
   };
 
   return {
@@ -148,6 +146,8 @@ function useProjects() {
     updateProjectTasks,
     addTaskToProject,
     clearProjectTasks,
+    setProjects,
+    setProjectTasks,
   };
 }
 

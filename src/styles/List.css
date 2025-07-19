@@ -1,6 +1,5 @@
 .list__container {
-  height: 100%;
-  max-height: 45vh;
-  overflow-y: auto;
-  padding-bottom: 1rem;
+  /* Eliminamos height: 100% y max-height para permitir altura natural */
+  /* Eliminamos overflow-y: auto ya que no necesitamos scroll interno */
+  /* Eliminamos padding-bottom que agregaba espacio extra */
 }

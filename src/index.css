@@ -1,6 +1,22 @@
 @import "tailwindcss";
 
-body {
-  background-color: rgba(128, 128, 128, 0.1);
-  font-family: "Lexend", sans-serif;
+/* Reglas adicionales para dispositivos físicos iOS */
+@supports (-webkit-touch-callout: none) {
+  /* Solo mantener reglas básicas del app-layout */
+  .app-layout {
+    height: 100vh !important;
+    height: -webkit-fill-available !important;
+  }
+}
+
+/* Utilidades para truncar texto */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+[id^="DndDescribedBy-"] {
+  display: none !important;
 }

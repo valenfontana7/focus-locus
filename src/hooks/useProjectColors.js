@@ -31,7 +31,7 @@ export default function useProjectColors(projects) {
       let changed = false;
       const usedColors = Object.values(prev);
       const updated = { ...prev };
-      projects.forEach((name) => {
+      (projects || []).forEach((name) => {
         if (!updated[name]) {
           updated[name] = getRandomColor(usedColors);
           usedColors.push(updated[name]);
@@ -40,7 +40,7 @@ export default function useProjectColors(projects) {
       });
       // Eliminar colores de proyectos borrados
       Object.keys(updated).forEach((name) => {
-        if (!projects.includes(name)) {
+        if (!(projects || []).includes(name)) {
           delete updated[name];
           changed = true;
         }

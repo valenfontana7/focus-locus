@@ -1,7 +1,214 @@
 .home {
-  width: calc(100vw - 3rem);
-  height: calc(100vh - 9rem);
+  width: calc(100vw - 1rem);
+  margin-left: auto;
+  margin-right: auto;
+  height: 100vh;
+  height: -webkit-fill-available;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
   display: flex;
   flex-direction: column;
   box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+/* Sin sombra cuando no hay proyectos */
+.home.no-projects {
+  box-shadow: none;
+}
+
+/* Sin borde inferior cuando no hay proyectos */
+.home__content-main.no-projects {
+  border-bottom: none !important;
+}
+
+/* Clase personalizada para z-index 40 */
+.z-40 {
+  z-index: 40;
+}
+
+/* Estilos específicos para DragOverlay */
+[data-dnd-overlay] {
+  z-index: 1 !important;
+}
+
+/* Asegurar que los modales estén por encima de todo */
+.fixed.inset-0 {
+  z-index: 99999 !important;
+}
+
+/* Estilos para el overlay del sidebar con blur */
+.sidebar-overlay {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background-color: rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease-in-out;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}
+
+/* Asegurar que el sidebar esté por encima de todo en mobile */
+@media (max-width: 1023px) {
+  .sidebar {
+    z-index: 9999 !important;
+  }
+
+  .sidebar-container {
+    z-index: 9999 !important;
+  }
+
+  [data-dnd-overlay] {
+    z-index: 1 !important;
+  }
+}
+
+/* En desktop, el sidebar debe comportarse normalmente */
+@media (min-width: 1024px) {
+  .sidebar {
+    z-index: 100 !important;
+  }
+
+  .sidebar-container {
+    z-index: 100 !important;
+  }
+
+  [data-dnd-overlay] {
+    z-index: 1 !important;
+  }
+}
+
+/* Control de scroll global */
+body {
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
+  touch-action: pan-x !important;
+  height: 100vh;
+  height: -webkit-fill-available;
+}
+
+/* Estilos iniciales para evitar salto visual */
+.home {
+  min-height: 100vh !important;
+  min-height: -webkit-fill-available !important;
+}
+
+/* Estilos específicos para iOS Safari */
+@supports (-webkit-touch-callout: none) {
+  .home {
+    height: -webkit-fill-available !important;
+    min-height: -webkit-fill-available !important;
+  }
+
+  .home__content {
+    height: -webkit-fill-available !important;
+    min-height: -webkit-fill-available !important;
+  }
+
+  .home__content-main {
+    height: -webkit-fill-available !important;
+    min-height: -webkit-fill-available !important;
+  }
+}
+
+@media (min-width: 640px) {
+  .home {
+    width: calc(100vw - 1.5rem);
+    height: 100vh;
+    height: -webkit-fill-available;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+}
+
+@media (min-width: 768px) {
+  .home {
+    width: calc(100vw - 2rem);
+    height: 100vh;
+    height: -webkit-fill-available;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+}
+
+@media (min-width: 1024px) {
+  .home {
+    width: calc(100vw - 3rem);
+    height: 100vh;
+    height: -webkit-fill-available;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+}
+
+@media (min-width: 1280px) {
+  .home {
+    width: calc(100vw - 4rem);
+    height: 100vh;
+    height: -webkit-fill-available;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+}
+
+@media (min-width: 1536px) {
+  .home {
+    width: calc(100vw - 5rem);
+    height: 100vh;
+    height: -webkit-fill-available;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+}
+
+.home__content {
+  min-height: 100% !important;
+  flex: 1 !important;
+  height: 100vh !important;
+  height: -webkit-fill-available !important;
+}
+
+.home__content-main {
+  min-height: 100% !important;
+  flex: 1 !important;
+  height: 100vh !important;
+  height: -webkit-fill-available !important;
+}
+
+/* Permitir scroll solo en contenedores de listas */
+.list__container {
+  overflow-y: auto !important;
+  touch-action: pan-y !important;
+  -webkit-overflow-scrolling: touch !important;
+  max-height: 100% !important;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 #f7fafc;
+}
+
+.list__container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.list__container::-webkit-scrollbar-track {
+  background: #f7fafc;
+  border-radius: 3px;
+}
+
+.list__container::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 3px;
+}
+
+.list__container::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
 }

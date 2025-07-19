@@ -1,4 +1,48 @@
 .app-layout {
   width: 100%;
-  height: calc(100vh - 6rem);
+  height: 100vh;
+  height: -webkit-fill-available;
+  display: flex;
+  flex-direction: column;
+  padding-top: 0.25rem;
+}
+
+@media (min-width: 640px) {
+  .app-layout {
+    height: 100vh;
+    height: -webkit-fill-available;
+    padding-top: 0.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .app-layout {
+    height: 100vh;
+    height: -webkit-fill-available;
+    padding-top: 0.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-layout {
+    height: 100vh;
+    height: -webkit-fill-available;
+    padding-top: 1rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .app-layout {
+    height: 100vh;
+    height: -webkit-fill-available;
+    padding-top: 1.25rem;
+  }
+}
+
+@media (min-width: 1536px) {
+  .app-layout {
+    height: 100vh;
+    height: -webkit-fill-available;
+    padding-top: 1.5rem;
+  }
 }

@@ -14,11 +14,35 @@
 /* Sin sombra cuando no hay proyectos */
 .home.no-projects {
   box-shadow: none;
+  height: 100% !important;
+  min-height: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  flex: 1 !important;
 }
 
 /* Sin borde inferior cuando no hay proyectos */
 .home__content-main.no-projects {
   border-bottom: none !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Asegurar que el contenedor principal tome toda la altura cuando no hay proyectos */
+.home.no-projects .home__content {
+  height: 100% !important;
+  min-height: 100% !important;
+  flex: 1 !important;
+}
+
+.home.no-projects .home__content-main {
+  height: 100% !important;
+  min-height: 100% !important;
+  flex: 1 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
 }
 
 /* Clase personalizada para z-index 40 */

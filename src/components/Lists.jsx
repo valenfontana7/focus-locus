@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import List from "./List";
 import { useDroppable } from "@dnd-kit/core";
 import { useProjectContext } from "../context/ProjectContext";
@@ -8,16 +8,23 @@ function Lists() {
     useProjectContext();
   const [taskCounter, setTaskCounter] = useState(0);
 
-  // Obtener las tareas del proyecto activo
-  const localTasks = projectTasks[activeProject] || {
-    pendientes: [],
-    enCurso: [],
-    terminadas: [],
-  };
+  // Obtener las tareas del proyecto activo - manejar caso cuando no hay proyecto activo
+  const localTasks = useMemo(() => {
+    return (
+      (activeProject && projectTasks[activeProject]) || {
+        pendientes: [],
+        enCurso: [],
+        terminadas: [],
+      }
+    );
+  }, [activeProject, projectTasks]);
 
   // Función atómica para agregar tarea
   const addTaskAtomically = useCallback(
     (taskName) => {
+      // Solo agregar tarea si hay un proyecto activo
+      if (!activeProject) return;
+
       const newTask = {
         id: Date.now().toString(),
         nombre: taskName,

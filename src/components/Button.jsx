@@ -17,7 +17,7 @@ const Button = ({
   ...rest
 }) => {
   const base =
-    "flex gap-x-4 align-center rounded-lg font-semibold transition-colors focus:outline-none text-lg shadow-md backdrop-blur-md";
+    "flex gap-x-2 sm:gap-x-3 align-center rounded-md sm:rounded-lg font-semibold transition-colors focus:outline-none text-sm sm:text-base md:text-base lg:text-lg xl:text-xl px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 shadow-md backdrop-blur-md";
   const variants = {
     primary:
       "bg-black/70 text-white hover:bg-black/80 border border-white/20 px-4 py-3",

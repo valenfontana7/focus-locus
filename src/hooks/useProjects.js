@@ -33,32 +33,13 @@ export const createInitialTaskLists = (projectName) => {
 };
 
 function useProjects() {
-  // Estado de proyectos
-  const [projects, setProjects] = useLocalStorage("focusLocusProjects", [
-    "Mi Primer Proyecto",
-  ]);
+  // Estado de proyectos - iniciamos con array vacío para mostrar welcome screen
+  const [projects, setProjects] = useLocalStorage("focusLocusProjects", []);
 
-  // Estado de tareas por proyecto
+  // Estado de tareas por proyecto - iniciamos vacío
   const [projectTasks, setProjectTasks] = useLocalStorage(
     "focusLocusProjectTasks",
-    {
-      "Mi Primer Proyecto": {
-        pendientes: [
-          {
-            id: "welcome-1",
-            nombre: "¡Bienvenido a FocusLocus!",
-            expira: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-              .toISOString()
-              .split("T")[0],
-            prioridad: "baja",
-            descripcion:
-              "Esta es tu primera tarea. Puedes editarla, moverla entre listas o eliminarla.",
-          },
-        ],
-        enCurso: [],
-        terminadas: [],
-      },
-    }
+    {}
   );
 
   // Función para agregar un nuevo proyecto

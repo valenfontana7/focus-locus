@@ -37,22 +37,21 @@ function Navbar({ search, setSearch, onMenuClick, showMenuButton = true }) {
           <Button
             variant="secondary"
             onClick={onMenuClick}
-            className="lg:hidden p-1 sm:p-1.5 md:p-2 flex-shrink-0 min-w-0 min-h-0"
+            className="lg:hidden p-0.5 sm:p-1.5 md:p-2 flex-shrink-0 min-w-0 min-h-0 w-8 h-8 sm:w-auto sm:h-auto flex items-center justify-center"
             title="Menú"
           >
-            <MenuIcon />
+            <MenuIcon className="text-base sm:text-lg" />
           </Button>
         )}
         <SearchBar search={search} setSearch={setSearch} />
       </div>
-
       {/* Botones de control */}
       <div className="flex gap-1 sm:gap-1.5 md:gap-2 lg:gap-3 xl:gap-4 justify-end flex-shrink-0 ml-2 sm:ml-3 md:ml-4 lg:ml-6">
         <Button
           onClick={handleAddTask}
           disabled={projects.length === 0}
           variant="primary"
-          className="px-1.5 sm:px-2.5 md:px-3.5 lg:px-4.5 py-0.5 sm:py-1 md:py-1.5 text-xs sm:text-sm md:text-base min-w-[60px] sm:min-w-[70px] md:min-w-[80px] border"
+          className="px-0.5 sm:px-2.5 md:px-3 lg:px-4 xl:px-4.5 py-0.5 sm:py-1 md:py-1 lg:py-1.5 text-xs sm:text-sm md:text-sm lg:text-base min-w-[24px] sm:min-w-[70px] md:min-w-[75px] lg:min-w-[80px] h-7 sm:h-auto border flex items-center justify-center"
           title={
             projects.length === 0
               ? "No hay proyectos disponibles"
@@ -60,13 +59,13 @@ function Navbar({ search, setSearch, onMenuClick, showMenuButton = true }) {
           }
         >
           <span className="hidden sm:inline">+ Agregar tarea</span>
-          <span className="sm:hidden text-xl">+</span>
+          <span className="sm:hidden text-sm">+</span>
         </Button>
         <Button
           onClick={clearAllData}
           disabled={projects.length === 0}
           variant="secondary"
-          className="px-1.5 sm:px-2.5 md:px-3.5 lg:px-4.5 py-0.5 sm:py-1 md:py-1.5 text-xs sm:text-sm md:text-base min-w-[60px] sm:min-w-[70px] md:min-w-[80px] border"
+          className="px-0.5 sm:px-2.5 md:px-3 lg:px-4 xl:px-4.5 py-0.5 sm:py-1 md:py-1 lg:py-1.5 text-xs sm:text-sm md:text-sm lg:text-base min-w-[24px] sm:min-w-[70px] md:min-w-[75px] lg:min-w-[80px] h-7 sm:h-auto border flex items-center justify-center"
           title={
             projects.length === 0
               ? "No hay proyectos disponibles"
@@ -74,10 +73,9 @@ function Navbar({ search, setSearch, onMenuClick, showMenuButton = true }) {
           }
         >
           <span className="hidden sm:inline">🗑️ Limpiar tareas</span>
-          <span className="sm:hidden text-xl">🗑️</span>
+          <span className="sm:hidden text-sm">🗑️</span>
         </Button>
       </div>
-
       {/* Modal para confirmar limpiar todas las tareas */}
       <Modal
         open={clearModal.open}

@@ -158,25 +158,6 @@ function Home() {
     setSidebarOpen(false);
   };
 
-  // Función para manejar la creación de proyecto desde el call-to-action
-  const handleCreateProject = () => {
-    localStorage.removeItem("focusLocusProjects");
-    localStorage.removeItem("focusLocusProjectTasks");
-    localStorage.removeItem("focusLocusActiveProject");
-    window.location.reload();
-  };
-
-  // Listener para el evento add-project desde el call-to-action
-  useEffect(() => {
-    const handleAddProjectEvent = () => {
-      handleCreateProject();
-    };
-
-    window.addEventListener("add-project", handleAddProjectEvent);
-    return () =>
-      window.removeEventListener("add-project", handleAddProjectEvent);
-  }, []);
-
   const handleDragStart = (event) => {
     setActiveId(event.active.id);
     // Prevenir scroll durante el drag
@@ -546,7 +527,7 @@ function Home() {
         }}
       >
         <div
-          className={`home bg-white rounded-2xl flex flex-col overflow-hidden h-full ${
+          className={`home bg-white rounded-2xl flex flex-col overflow-hidden h-full flex-1 ${
             isLoading ? "opacity-0" : "opacity-100"
           } transition-opacity duration-200 ${
             projects.length === 0 ? "justify-center no-projects" : ""
@@ -560,68 +541,77 @@ function Home() {
               showMenuButton={projects.length > 0}
             />
           )}
-          <div className="home__content flex flex-col lg:flex-row flex-1 min-h-0 overflow-hidden h-full">
-            {/* Sidebar - con animación de deslizamiento */}
-            {projects.length > 0 && (
+          <div
+            className={`home__content flex flex-col lg:flex-row flex-1 min-h-0 overflow-hidden h-full ${
+              projects.length === 0 ? "min-h-full" : ""
+            }`}
+          >
+            {/* Sidebar - siempre presente en el DOM pero oculto cuando no hay proyectos */}
+            <div
+              className={`${
+                projects.length === 0
+                  ? "fixed -top-full opacity-0 pointer-events-none z-[999999]" // Oculto fuera de vista cuando no hay proyectos, pero los modales siguen funcionando
+                  : `lg:block ${
+                      sidebarOpen ? "block" : "hidden"
+                    } lg:relative lg:w-auto h-full fixed lg:static top-0 left-0 z-[999999] lg:z-[100]`
+              }`}
+            >
               <div
-                className={`lg:block ${
-                  sidebarOpen ? "block" : "hidden"
-                } lg:relative lg:w-auto h-full fixed lg:static top-0 left-0 z-[999999] lg:z-[100]`}
+                className={`sidebar-container h-full ${
+                  projects.length === 0
+                    ? "" // Sin animación cuando no hay proyectos
+                    : `${
+                        sidebarOpen ? "translate-x-0" : "-translate-x-full"
+                      } lg:translate-x-0 transition-transform duration-300 ease-in-out`
+                }`}
               >
-                <div
-                  className={`sidebar-container h-full ${
-                    sidebarOpen ? "translate-x-0" : "-translate-x-full"
-                  } lg:translate-x-0 transition-transform duration-300 ease-in-out`}
-                >
-                  <Sidebar
-                    search={search}
-                    setSearch={setSearch}
-                    onClose={closeSidebar}
-                  />
-                </div>
+                <Sidebar
+                  search={search}
+                  setSearch={setSearch}
+                  onClose={closeSidebar}
+                />
               </div>
-            )}
-
+            </div>{" "}
             <div
               ref={contentMainRef}
               className={`home__content-main w-full bg-gray-100 rounded-br-2xl flex flex-col flex-1 min-h-0 overflow-hidden h-full ${
                 projects.length === 0
-                  ? "rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl p-0 shadow-none no-projects"
+                  ? "rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl p-0 shadow-none no-projects min-h-full"
                   : "px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 py-3 sm:py-4 md:py-5 lg:py-6 xl:py-8 border-b-4 border-gray-300"
               }`}
             >
               {projects.length === 0 ? (
                 // Call-to-action cuando no hay proyectos
-                <div className="flex-1 flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
+                <div className="flex-1 flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 min-h-full py-4 sm:py-6 md:py-8 lg:py-10 xl:py-12">
                   <div className="max-w-md mx-auto">
-                    <div className="mb-6">
-                      <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span className="text-3xl">📋</span>
+                    <div className="mb-6 sm:mb-8">
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                        <span className="text-3xl sm:text-4xl">📋</span>
                       </div>
-                      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3">
+                      <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-4xl font-bold text-gray-800 mb-3 sm:mb-4">
                         ¡Bienvenido a FocusLocus!
                       </h2>
-                      <p className="text-gray-600 text-lg mb-6">
+                      <p className="text-lg sm:text-xl md:text-lg lg:text-xl mb-6 sm:mb-8">
                         Organiza tus tareas y proyectos de manera eficiente.
                         Comienza creando tu primer proyecto.
                       </p>
                     </div>
 
-                    <div className="space-y-4">
+                    <div className="space-y-4 sm:space-y-6">
                       <button
                         onClick={() => {
                           // Disparar evento para abrir modal de nuevo proyecto
                           window.dispatchEvent(new CustomEvent("add-project"));
                         }}
-                        className="w-full bg-gray-950 text-white py-4 px-6 rounded-xl text-lg font-semibold hover:bg-gray-800 transition-colors"
+                        className="w-full bg-gray-950 text-white py-4 sm:py-5 px-6 sm:px-8 rounded-xl text-lg sm:text-xl font-semibold hover:bg-gray-800 transition-colors shadow-lg"
                       >
                         ✨ Crear mi primer proyecto
                       </button>
 
-                      <div className="text-sm text-gray-500">
-                        <p>Organiza tus tareas en proyectos</p>
-                        <p>Mueve tareas entre listas con drag & drop</p>
-                        <p>Establece prioridades y fechas de vencimiento</p>
+                      <div className="text-sm sm:text-base text-gray-600 space-y-1 sm:space-y-2">
+                        <p>📁 Organiza tus tareas en proyectos</p>
+                        <p>🔄 Mueve tareas entre listas con drag & drop</p>
+                        <p>⭐ Establece prioridades y fechas de vencimiento</p>
                       </div>
                     </div>
                   </div>
@@ -629,11 +619,11 @@ function Home() {
               ) : (
                 // Contenido normal cuando hay proyectos
                 <>
-                  <div className="home__content-main-header flex-shrink-0 mb-3 sm:mb-4 md:mb-5 lg:mb-6 xl:mb-8 mt-6 sm:mt-3 md:mt-4 lg:mt-5 xl:mt-6">
+                  <div className="home__content-main-header flex-shrink-0 mb-3 sm:mb-4 md:mb-5 lg:mb-6 xl:mb-8 mt-6 sm:mt-3 md:mt-4 lg:mt-8 xl:mt-10">
                     {editingProject ? (
                       <input
                         id="project-name-input"
-                        className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold px-2 py-1 rounded focus:ring-2 focus:ring-blue-500 w-full max-w-xs"
+                        className="text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold px-2 py-1 rounded focus:ring-2 focus:ring-blue-500 w-full max-w-xs"
                         value={projectNameInput}
                         onChange={handleProjectNameChange}
                         onBlur={handleProjectNameConfirm}
@@ -651,7 +641,7 @@ function Home() {
                       />
                     ) : (
                       <span
-                        className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold cursor-pointer px-2 py-1 rounded hover:bg-gray-200 transition-colors"
+                        className="text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold cursor-pointer px-2 py-1 rounded hover:bg-gray-200 transition-colors"
                         tabIndex={0}
                         onClick={handleProjectNameEdit}
                         onKeyDown={(e) => {

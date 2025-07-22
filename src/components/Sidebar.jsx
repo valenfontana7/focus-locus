@@ -165,7 +165,7 @@ function Sidebar({ search, onClose }) {
           <CloseIcon />
         </button>
 
-        <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-medium flex-shrink-0 mb-8">
+        <h2 className="text-lg sm:text-xl md:text-xl lg:text-2xl xl:text-3xl font-medium flex-shrink-0 mb-8">
           Mis proyectos
         </h2>
         <Button

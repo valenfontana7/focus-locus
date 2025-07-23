@@ -3,13 +3,35 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
+/**
+ * Crea un objeto Date a partir de una fecha string en formato YYYY-MM-DD
+ * evitando problemas de zona horaria
+ */
+function parsearFechaLocal(fecha) {
+  if (!fecha) return null;
+  if (fecha instanceof Date) return fecha;
+
+  // Si es un string en formato YYYY-MM-DD, parsearlo manualmente
+  if (typeof fecha === "string" && fecha.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    const [año, mes, dia] = fecha.split("-").map(Number);
+    return new Date(año, mes - 1, dia); // mes - 1 porque Date usa base 0 para meses
+  }
+
+  return new Date(fecha);
+}
+
 function DatePicker({ value, onChange, placeholder = "Seleccionar fecha" }) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(
-    value ? new Date(value) : null
+    value ? parsearFechaLocal(value) : null
   );
   const pickerRef = useRef(null);
+
+  // Actualizar selectedDate cuando cambie el value
+  useEffect(() => {
+    setSelectedDate(value ? parsearFechaLocal(value) : null);
+  }, [value]);
 
   // Cerrar el picker cuando se hace clic fuera
   useEffect(() => {

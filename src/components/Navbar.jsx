@@ -4,6 +4,7 @@ import Modal from "./Modal";
 import { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import Button from "./Button";
+import "../styles/Navbar.css";
 
 function Navbar({ search, setSearch, onMenuClick, showMenuButton = true }) {
   const { activeProject, projects } = useProjectContext();

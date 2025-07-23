@@ -1,11 +1,48 @@
 @import "tailwindcss";
 
-/* Reglas adicionales para dispositivos físicos iOS */
+/* Reset básico para altura completa */
+html,
+body {
+  height: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Soporte para iOS Safari */
 @supports (-webkit-touch-callout: none) {
-  /* Solo mantener reglas básicas del app-layout */
-  .app-layout {
-    height: 100vh !important;
-    height: -webkit-fill-available !important;
+  html,
+  body {
+    height: 100vh;
+    height: -webkit-fill-available;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* El root div de React también necesita altura completa */
+#root {
+  height: 100%;
+  min-height: 100vh;
+}
+
+@supports (-webkit-touch-callout: none) {
+  #root {
+    height: 100vh;
+    height: -webkit-fill-available;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* Soporte adicional para Safe Area en iOS Safari */
+@supports (-webkit-touch-callout: none) {
+  /* Variables CSS para safe area */
+  :root {
+    --safe-area-inset-top: env(safe-area-inset-top);
+    --safe-area-inset-right: env(safe-area-inset-right);
+    --safe-area-inset-bottom: env(safe-area-inset-bottom);
+    --safe-area-inset-left: env(safe-area-inset-left);
   }
 }
 
@@ -15,6 +52,7 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
+  line-clamp: 1;
 }
 
 [id^="DndDescribedBy-"] {

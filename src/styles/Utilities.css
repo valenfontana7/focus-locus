@@ -1,0 +1,107 @@
+/* ===========================================
+   UTILIDADES Y ESTILOS ADICIONALES
+   =========================================== */
+
+/* Z-index utilities */
+.z-40 {
+  z-index: 40;
+}
+
+/* DragOverlay específico */
+[data-dnd-overlay] {
+  z-index: 1 !important;
+}
+
+/* Modales por encima de todo */
+.fixed.inset-0 {
+  z-index: 99999 !important;
+}
+
+/* ===========================================
+   SIDEBAR OVERLAY
+   =========================================== */
+
+.sidebar-overlay {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background-color: rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease-in-out;
+  animation: fadeIn 0.3s ease-in-out;
+  z-index: 1 !important; /* Por debajo del contenido principal para que no se vea */
+}
+
+/* Desactivar position fixed del overlay para que el z-index funcione correctamente */
+.sidebar-overlay.fixed {
+  position: absolute !important; /* Cambiar de fixed a absolute para que respete el z-index */
+}
+
+/* Regla ultra específica para el overlay del sidebar */
+div.fixed.inset-0.backdrop-blur-sm.bg-black.bg-opacity-20.lg\:hidden.sidebar-overlay {
+  position: absolute !important;
+  z-index: 1 !important; /* Por debajo del contenido principal */
+}
+
+/* También para cualquier overlay con estas clases */
+.fixed.inset-0.sidebar-overlay {
+  position: absolute !important;
+  z-index: 1 !important; /* Por debajo del contenido principal */
+}
+
+/* Regla específica para mobile para asegurar que el overlay esté por debajo del sidebar */
+@media (max-width: 1023px) {
+  .sidebar-overlay {
+    z-index: 1 !important; /* Por debajo del contenido principal en mobile */
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}
+
+/* ===========================================
+   Z-INDEX MANAGEMENT
+   =========================================== */
+
+/* Mobile sidebar z-index hierarchy:
+   - Sidebar: 999999 (más alto, por encima de todo excepto modales)
+   - Sidebar overlay: 50 (por debajo del sidebar, por encima del contenido)
+   - Home content: 1 (contenido normal)
+   - DragOverlay: 1 (nivel del contenido)
+*/
+@media (max-width: 1023px) {
+  .sidebar {
+    z-index: 999999 !important;
+  }
+
+  .sidebar-container {
+    z-index: 999999 !important;
+  }
+
+  [data-dnd-overlay] {
+    z-index: 1 !important;
+  }
+}
+
+/* Desktop sidebar z-index */
+@media (min-width: 1024px) {
+  .sidebar {
+    z-index: 100 !important;
+  }
+
+  .sidebar-container {
+    z-index: 100 !important;
+  }
+
+  [data-dnd-overlay] {
+    z-index: 1 !important;
+  }
+}

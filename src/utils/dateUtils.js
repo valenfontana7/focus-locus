@@ -28,6 +28,25 @@ const MESES = [
 ];
 
 /**
+ * Crea un objeto Date a partir de una fecha string en formato YYYY-MM-DD
+ * evitando problemas de zona horaria
+ * @param {string|Date} fecha - Fecha en formato string o objeto Date
+ * @returns {Date} Objeto Date en zona horaria local
+ */
+function parsearFechaLocal(fecha) {
+  if (!fecha) return null;
+  if (fecha instanceof Date) return fecha;
+
+  // Si es un string en formato YYYY-MM-DD, parsearlo manualmente
+  if (typeof fecha === "string" && fecha.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    const [año, mes, dia] = fecha.split("-").map(Number);
+    return new Date(año, mes - 1, dia); // mes - 1 porque Date usa base 0 para meses
+  }
+
+  return new Date(fecha);
+}
+
+/**
  * Formatea una fecha de manera personalizada y amigable
  * @param {string|Date} fecha - Fecha a formatear
  * @returns {string} Fecha formateada
@@ -35,7 +54,7 @@ const MESES = [
 export function formatearFechaPersonalizada(fecha) {
   if (!fecha) return "";
 
-  const fechaObj = new Date(fecha);
+  const fechaObj = parsearFechaLocal(fecha);
   const hoy = new Date();
   const manana = new Date(hoy);
   manana.setDate(hoy.getDate() + 1);
@@ -98,7 +117,7 @@ export function formatearFechaPersonalizada(fecha) {
 export function formatearFechaCompacta(fecha) {
   if (!fecha) return "";
 
-  const fechaObj = new Date(fecha);
+  const fechaObj = parsearFechaLocal(fecha);
   const hoy = new Date();
 
   const fechaSinHora = new Date(
@@ -155,10 +174,17 @@ export function formatearFechaCompacta(fecha) {
 export function esHoy(fecha) {
   if (!fecha) return false;
 
-  const fechaObj = new Date(fecha);
+  const fechaObj = parsearFechaLocal(fecha);
   const hoy = new Date();
 
-  return fechaObj.toDateString() === hoy.toDateString();
+  const fechaSinHora = new Date(
+    fechaObj.getFullYear(),
+    fechaObj.getMonth(),
+    fechaObj.getDate()
+  );
+  const hoySinHora = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+
+  return fechaSinHora.getTime() === hoySinHora.getTime();
 }
 
 /**
@@ -169,11 +195,22 @@ export function esHoy(fecha) {
 export function esManana(fecha) {
   if (!fecha) return false;
 
-  const fechaObj = new Date(fecha);
+  const fechaObj = parsearFechaLocal(fecha);
   const manana = new Date();
   manana.setDate(manana.getDate() + 1);
 
-  return fechaObj.toDateString() === manana.toDateString();
+  const fechaSinHora = new Date(
+    fechaObj.getFullYear(),
+    fechaObj.getMonth(),
+    fechaObj.getDate()
+  );
+  const mananaSinHora = new Date(
+    manana.getFullYear(),
+    manana.getMonth(),
+    manana.getDate()
+  );
+
+  return fechaSinHora.getTime() === mananaSinHora.getTime();
 }
 
 /**
@@ -184,7 +221,7 @@ export function esManana(fecha) {
 export function estaVencida(fecha) {
   if (!fecha) return false;
 
-  const fechaObj = new Date(fecha);
+  const fechaObj = parsearFechaLocal(fecha);
   const hoy = new Date();
 
   // Resetear horas para comparar solo fechas

@@ -5,6 +5,7 @@ import Modal from "./Modal";
 import TaskEditModal from "./TaskEditModal";
 import { TaskActionContext } from "../context/TaskActionContext";
 import Button from "./Button";
+import "../styles/List.css";
 /**
  * Componente para renderizar una lista de tareas.
  * @param {string} title - Título de la lista.
@@ -125,7 +126,7 @@ function List({ title, items, showExpira, onRename, onDelete }) {
                 : undefined
               : undefined,
         }}
-        className="list-container bg-white rounded-lg shadow p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 flex flex-col h-full mx-1 sm:mx-2 md:mx-3 lg:mx-4 xl:mx-5 flex-1"
+        className="list-container bg-white rounded-lg shadow p-2 sm:p-2 md:p-2 lg:p-3 xl:p-3 flex flex-col h-full mx-1 sm:mx-2 md:mx-2 lg:mx-2 xl:mx-2 flex-1 ios-safe-margin"
       >
         <div className="flex items-center gap-2 mb-2">
           <h3 className="text-base sm:text-lg font-bold flex-1">{title}</h3>

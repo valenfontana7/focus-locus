@@ -1,5 +1,50 @@
+/* Estilos para contenedores de listas con scroll */
 .list__container {
-  /* Eliminamos height: 100% y max-height para permitir altura natural */
-  /* Eliminamos overflow-y: auto ya que no necesitamos scroll interno */
-  /* Eliminamos padding-bottom que agregaba espacio extra */
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f3f4f6;
+}
+
+/* Scrollbar personalizado para webkit */
+.list__container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.list__container::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 3px;
+}
+
+.list__container::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.list__container::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Soporte para Safe Area en las listas */
+@supports (-webkit-touch-callout: none) {
+  .ios-safe-margin:first-child {
+    margin-left: max(0.25rem, env(safe-area-inset-left));
+  }
+
+  .ios-safe-margin:last-child {
+    margin-right: max(0.25rem, env(safe-area-inset-right));
+  }
+
+  @media (min-width: 640px) {
+    .ios-safe-margin:first-child {
+      margin-left: max(0.5rem, env(safe-area-inset-left));
+    }
+
+    .ios-safe-margin:last-child {
+      margin-right: max(0.5rem, env(safe-area-inset-right));
+    }
+  }
 }

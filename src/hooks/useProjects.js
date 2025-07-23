@@ -72,6 +72,47 @@ function useProjects() {
       return newTasks;
     });
   };
+  // Función para renombrar un proyecto manteniendo sus tareas
+  const renameProject = (oldName, newName) => {
+    const trimmedNewName = newName.trim();
+
+    // Validaciones
+    if (!trimmedNewName || trimmedNewName === oldName) {
+      return false;
+    }
+
+    // Verificar si el nuevo nombre ya existe
+    if (projects.includes(trimmedNewName)) {
+      return false;
+    }
+
+    // Disparar evento ANTES de actualizar los estados para preservar colores
+    window.dispatchEvent(
+      new CustomEvent("project-renamed", {
+        detail: { oldName, newName: trimmedNewName },
+      })
+    );
+
+    // Actualizar array de proyectos
+    setProjects((prevProjects) =>
+      prevProjects.map((p) => (p === oldName ? trimmedNewName : p))
+    );
+
+    // Mover las tareas del nombre anterior al nuevo
+    setProjectTasks((prevTasks) => {
+      const updatedTasks = { ...prevTasks };
+
+      // Si existen tareas bajo el nombre anterior, moverlas al nuevo nombre
+      if (updatedTasks[oldName]) {
+        updatedTasks[trimmedNewName] = updatedTasks[oldName];
+        delete updatedTasks[oldName];
+      }
+
+      return updatedTasks;
+    });
+
+    return true;
+  };
 
   // Función para obtener las tareas de un proyecto
   const getProjectTasks = (projectName) => {
@@ -123,6 +164,7 @@ function useProjects() {
     projectTasks,
     addProject,
     deleteProject,
+    renameProject,
     getProjectTasks,
     updateProjectTasks,
     addTaskToProject,

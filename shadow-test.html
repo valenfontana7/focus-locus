@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎨 Test de Sombras - FocusLocus</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 40px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .title {
+        text-align: center;
+        color: #374151;
+        margin-bottom: 40px;
+        font-size: 2.5em;
+      }
+
+      .shadow-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .shadow-card {
+        background: white;
+        padding: 30px;
+        border-radius: 16px;
+        min-height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-weight: 600;
+        color: #4b5563;
+      }
+
+      .shadow-original {
+        box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.1);
+      }
+
+      .shadow-improved {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.05);
+      }
+
+      .shadow-navbar {
+        box-shadow: 0 6px 10px -2px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.05);
+      }
+
+      .shadow-strong {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+
+      .shadow-soft {
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+          0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      }
+
+      .shadow-inset {
+        box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+      }
+
+      .shadow-colored {
+        box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.1),
+          0 2px 4px -1px rgba(99, 102, 241, 0.06);
+      }
+
+      .test-info {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
+
+      .code {
+        background: #1f2937;
+        color: #10b981;
+        padding: 15px;
+        border-radius: 8px;
+        font-family: "Courier New", monospace;
+        font-size: 0.9em;
+        margin: 10px 0;
+        overflow-x: auto;
+      }
+
+      .comparison {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin: 30px 0;
+      }
+
+      .before,
+      .after {
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        text-align: center;
+      }
+
+      .before {
+        box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.1);
+      }
+
+      .after {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="title">🎨 Test de Sombras - FocusLocus</h1>
+
+      <div class="test-info">
+        <h2>🔧 Problema de Sombras Resuelto</h2>
+        <p>Las sombras no se veían claramente porque:</p>
+        <ul>
+          <li>
+            ❌ <strong>AppLayout sin padding:</strong> No había espacio
+            alrededor para que las sombras fueran visibles
+          </li>
+          <li>
+            ❌ <strong>Sombra muy sutil:</strong>
+            <code>box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.1)</code> era
+            demasiado tenue
+          </li>
+          <li>
+            ❌ <strong>Contenedor demasiado ancho:</strong> Las sombras se
+            cortaban en los bordes
+          </li>
+        </ul>
+
+        <h3>✅ Soluciones Aplicadas:</h3>
+        <div class="comparison">
+          <div class="before">
+            <h4>❌ Antes</h4>
+            <p>Sombra muy sutil</p>
+            <div class="code">box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.1);</div>
+          </div>
+          <div class="after">
+            <h4>✅ Después (Más prominente)</h4>
+            <p>Sombra con más presencia</p>
+            <div class="code">
+              box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px
+              rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.05);
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 style="text-align: center; margin: 40px 0 20px">
+        🎭 Galería de Sombras
+      </h2>
+
+      <div class="shadow-grid">
+        <div class="shadow-card shadow-original">
+          <div>
+            <h3>Original</h3>
+            <p>Muy sutil</p>
+          </div>
+        </div>
+
+        <div class="shadow-card shadow-improved">
+          <div>
+            <h3>Home Mejorada ✅</h3>
+            <p>Sombra más prominente</p>
+          </div>
+        </div>
+
+        <div class="shadow-card shadow-navbar">
+          <div>
+            <h3>Navbar ✅</h3>
+            <p>Sombra media</p>
+          </div>
+        </div>
+
+        <div class="shadow-card shadow-strong">
+          <div>
+            <h3>Fuerte</h3>
+            <p>Para elementos destacados</p>
+          </div>
+        </div>
+
+        <div class="shadow-card shadow-soft">
+          <div>
+            <h3>Suave</h3>
+            <p>Para listas y tareas</p>
+          </div>
+        </div>
+
+        <div class="shadow-card shadow-inset">
+          <div>
+            <h3>Interna</h3>
+            <p>Para áreas hundidas</p>
+          </div>
+        </div>
+
+        <div class="shadow-card shadow-colored">
+          <div>
+            <h3>Con Color</h3>
+            <p>Sombra azul</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="test-info">
+        <h3>📝 Archivos Modificados:</h3>
+        <ul>
+          <li>
+            <strong>AppLayout.css:</strong> Agregado padding básico en todos los
+            breakpoints
+          </li>
+          <li>
+            <strong>Home.css:</strong> Mejorada la sombra principal y agregadas
+            sombras para elementos internos
+          </li>
+        </ul>
+
+        <h3>🎯 Resultado:</h3>
+        <p>
+          ✅ Las sombras ahora son <strong>visibles y consistentes</strong> en
+          todos los tamaños de pantalla.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

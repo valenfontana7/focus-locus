@@ -1,4 +1,15 @@
 .navbar {
-  z-index: 11;
-  box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.1);
+  z-index: 10; /* Normal en desktop, por debajo del overlay en mobile */
+  /* Sombra más prominente para el navbar */
+  box-shadow: 0 6px 10px -2px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  border-radius: 12px 12px 0px 0px;
+  margin-bottom: 0.1rem;
+}
+
+/* En mobile, cuando el sidebar está abierto, el navbar debe estar por debajo del overlay */
+@media (max-width: 1023px) {
+  .navbar {
+    z-index: 0;
+  }
 }

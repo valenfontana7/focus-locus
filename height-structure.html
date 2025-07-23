@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🧱 Estructura de Altura - FocusLocus</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      .title {
+        text-align: center;
+        color: #4a5568;
+        margin-bottom: 30px;
+        font-size: 2.5em;
+      }
+
+      .diagram {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .level {
+        padding: 20px;
+        border-radius: 8px;
+        border: 2px solid;
+        position: relative;
+        font-weight: bold;
+      }
+
+      .level-1 {
+        background: #fef2f2;
+        border-color: #ef4444;
+        color: #dc2626;
+      }
+
+      .level-2 {
+        background: #f0f9ff;
+        border-color: #3b82f6;
+        color: #2563eb;
+        margin-left: 20px;
+      }
+
+      .level-3 {
+        background: #f0fdf4;
+        border-color: #22c55e;
+        color: #16a34a;
+        margin-left: 40px;
+      }
+
+      .level-4 {
+        background: #fefce8;
+        border-color: #eab308;
+        color: #ca8a04;
+        margin-left: 60px;
+      }
+
+      .code {
+        background: #1a1a1a;
+        color: #10b981;
+        padding: 10px;
+        border-radius: 4px;
+        font-family: "Courier New", monospace;
+        font-size: 0.9em;
+        margin-top: 10px;
+        overflow-x: auto;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+      }
+
+      .control-card {
+        background: #f8fafc;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid;
+      }
+
+      .control-card.primary {
+        border-left-color: #3b82f6;
+      }
+      .control-card.secondary {
+        border-left-color: #10b981;
+      }
+      .control-card.warning {
+        border-left-color: #f59e0b;
+      }
+
+      .control-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #374151;
+      }
+
+      .file-path {
+        background: #e5e7eb;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 0.8em;
+        color: #6b7280;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="title">🧱 Estructura de Altura - FocusLocus</h1>
+
+      <div class="diagram">
+        <div class="level level-1">
+          📱 HTML/BODY (100vh)
+          <div class="code">
+            html, body { height: 100%; min-height: 100vh; }
+          </div>
+          <small>📁 src/index.css</small>
+        </div>
+
+        <div class="level level-2">
+          🏠 APP-LAYOUT (100vh)
+          <div class="code">
+            .app-layout { height: 100vh; height: -webkit-fill-available; }
+          </div>
+          <small>📁 src/styles/AppLayout.css</small>
+        </div>
+
+        <div class="level level-3">
+          🏘️ HOME (100% del padre)
+          <div class="code">.home { height: 100%; min-height: 100%; }</div>
+          <small
+            >📁 src/styles/Home.css - <strong>CONTROLAR AQUÍ</strong></small
+          >
+        </div>
+
+        <div class="level level-4">
+          📋 CONTENT-MAIN (flex: 1, padding controlable)
+          <div class="code">
+            .home__content-main { flex: 1; padding: 1rem 1.25rem 1.5rem; }
+          </div>
+          <small
+            >📁 src/styles/Home.css -
+            <strong>AJUSTAR PADDING AQUÍ</strong></small
+          >
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="control-card primary">
+          <div class="control-title">🎯 Control Principal de Altura</div>
+          <div class="file-path">src/styles/Home.css</div>
+          <div class="code">
+            .home { height: 100%; /* ← CAMBIAR AQUÍ */ min-height: 100%; /* ← Y
+            AQUÍ */ }
+          </div>
+          <p>
+            <strong>Efecto:</strong> Controla la altura total de la aplicación
+          </p>
+        </div>
+
+        <div class="control-card secondary">
+          <div class="control-title">📐 Control de Padding Inferior</div>
+          <div class="file-path">src/styles/Home.css</div>
+          <div class="code">
+            @media (min-width: 1024px) { .home__content-main { padding: 1rem
+            1.25rem 1.5rem; /* ↑ */ /* CAMBIAR AQUÍ */ } }
+          </div>
+          <p>
+            <strong>Efecto:</strong> Espacio inferior donde no llegan las listas
+          </p>
+        </div>
+
+        <div class="control-card warning">
+          <div class="control-title">🚫 NO Modificar</div>
+          <div class="file-path">Automático</div>
+          <div class="code">
+            /* ESTOS SE CALCULAN SOLOS */ .home__content { flex: 1; }
+            .list__container { overflow-y: auto; }
+          </div>
+          <p>
+            <strong>Razón:</strong> Se ajustan automáticamente al contenedor
+            padre
+          </p>
+        </div>
+      </div>
+
+      <div
+        style="
+          margin-top: 30px;
+          padding: 20px;
+          background: #f3f4f6;
+          border-radius: 8px;
+        "
+      >
+        <h3>🧪 Para Probar Cambios:</h3>
+        <ol>
+          <li>Modifica los valores en <code>src/styles/Home.css</code></li>
+          <li>Guarda el archivo</li>
+          <li>Recarga el navegador</li>
+          <li>Usa las DevTools para inspeccionar</li>
+        </ol>
+
+        <h3>📊 Valores Recomendados:</h3>
+        <ul>
+          <li>
+            <strong>Compacto:</strong> <code>height: calc(100vh - 2rem)</code>
+          </li>
+          <li><strong>Normal:</strong> <code>height: 100%</code></li>
+          <li><strong>Espacioso:</strong> <code>padding-bottom: 3rem</code></li>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -103,7 +103,7 @@ function Task({
     <div
       ref={setCombinedRef}
       style={style}
-      className="flex items-center justify-between group relative shadow-sm p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7"
+      className="flex items-center justify-between group relative shadow-sm p-3 sm:p-4 md:p-4 lg:p-4 xl:p-5"
     >
       <div className="w-full">
         {/* Fila superior */}
@@ -161,11 +161,11 @@ function Task({
       </div>
       {!isOverlay && (
         <div
-          className="ml-0.5 sm:ml-1 md:ml-2 lg:ml-3 xl:ml-4 relative flex items-center"
+          className="ml-0.5 sm:ml-1 md:ml-1 lg:ml-2 xl:ml-2 relative flex items-center"
           ref={dropdownRef}
         >
           <button
-            className="flex items-center justify-center p-0.5 sm:p-1 md:p-2 lg:p-3 xl:p-4 rounded-full hover:bg-gray-200 focus:outline-none"
+            className="flex items-center justify-center p-0.5 sm:p-1 md:p-1 lg:p-2 xl:p-2 rounded-full hover:bg-gray-200 focus:outline-none"
             onClick={open ? () => setOpen(false) : handleMenuOpen}
           >
             <MoreVertIcon fontSize="small" />

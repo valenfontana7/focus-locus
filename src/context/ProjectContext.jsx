@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect } from "react";
-import useProjects from "../hooks/useProjects";
+import useSupabaseProjects from "../hooks/useSupabaseProjects";
 import useLocalStorage from "../hooks/useLocalStorage";
 
 const ProjectContext = createContext();
@@ -11,17 +11,22 @@ export function ProjectProvider({ children }) {
     null
   );
 
-  // Usar el hook useProjects que tiene persistencia
+  // Usar el hook híbrido que maneja Supabase + localStorage
   const {
     projects,
     projectTasks,
+    loading,
+    syncStatus,
+    isOnline,
     addProject,
     deleteProject,
+    renameProject,
     updateProjectTasks,
     addTaskToProject,
+    syncData,
     setProjects,
     setProjectTasks,
-  } = useProjects();
+  } = useSupabaseProjects();
 
   // Establecer automáticamente el primer proyecto como activo cuando se crea
   useEffect(() => {
@@ -42,11 +47,17 @@ export function ProjectProvider({ children }) {
         projects,
         addProject,
         deleteProject,
+        renameProject,
         projectTasks,
         updateProjectTasks,
         addTaskToProject,
         setProjects,
         setProjectTasks,
+        // Nuevas propiedades para Supabase
+        loading,
+        syncStatus,
+        isOnline,
+        syncData,
       }}
     >
       {children}

@@ -25,33 +25,80 @@ export default function useProjectColors(projects) {
     {}
   );
 
-  // Asignar color a proyectos nuevos
+  // Ref para rastrear renombramientos en proceso
+  const renamingInProgress = React.useRef(new Set());
+
+  // Escuchar evento de renombramiento de proyecto
   React.useEffect(() => {
-    setProjectColors((prev) => {
-      let changed = false;
-      const usedColors = Object.values(prev);
-      const updated = { ...prev };
-      (projects || []).forEach((name) => {
-        if (!updated[name]) {
-          updated[name] = getRandomColor(usedColors);
-          usedColors.push(updated[name]);
-          changed = true;
+    const handleProjectRenamed = (event) => {
+      const { oldName, newName } = event.detail;
+
+      // Marcar que está en proceso de renombramiento
+      renamingInProgress.current.add(newName);
+
+      setProjectColors((prev) => {
+        const updated = { ...prev };
+
+        // Si el proyecto anterior tenía un color, transferirlo al nuevo nombre
+        if (prev[oldName]) {
+          updated[newName] = prev[oldName];
+          delete updated[oldName];
         }
+
+        return updated;
       });
-      // Eliminar colores de proyectos borrados
-      Object.keys(updated).forEach((name) => {
-        if (!(projects || []).includes(name)) {
-          delete updated[name];
-          changed = true;
-        }
+
+      // Limpiar la bandera después de un pequeño delay
+      setTimeout(() => {
+        renamingInProgress.current.delete(newName);
+      }, 100);
+    };
+
+    window.addEventListener("project-renamed", handleProjectRenamed);
+    return () => {
+      window.removeEventListener("project-renamed", handleProjectRenamed);
+    };
+  }, [setProjectColors]);
+
+  // Asignar color a proyectos nuevos y limpiar proyectos eliminados
+  React.useEffect(() => {
+    // Evitar múltiples ejecuciones usando un timeout
+    const timeoutId = setTimeout(() => {
+      setProjectColors((prev) => {
+        let changed = false;
+        const updated = { ...prev };
+
+        // Asignar colores a proyectos nuevos
+        (projects || []).forEach((name) => {
+          if (!updated[name] && !renamingInProgress.current.has(name)) {
+            const newColor = getRandomColor(Object.values(updated));
+            updated[name] = newColor;
+            changed = true;
+          }
+        });
+
+        // Limpiar proyectos eliminados
+        Object.keys(updated).forEach((name) => {
+          if (
+            !(projects || []).includes(name) &&
+            !renamingInProgress.current.has(name)
+          ) {
+            delete updated[name];
+            changed = true;
+          }
+        });
+
+        return changed ? updated : prev;
       });
-      return changed ? updated : prev;
-    });
-    // Solo depende de projects
-  }, [projects]);
+    }, 50); // Pequeño delay para evitar múltiples ejecuciones
+
+    return () => clearTimeout(timeoutId);
+  }, [projects, setProjectColors]);
 
   // Obtener color de un proyecto
   const getColor = (projectName) => projectColors[projectName] || COLORS[0];
 
-  return { getColor };
+  return {
+    getColor,
+  };
 }

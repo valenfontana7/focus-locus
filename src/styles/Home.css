@@ -1,220 +1,173 @@
+/* ===========================================
+   CONTROL DE ALTURA - ELEMENTOS PRINCIPALES
+   =========================================== */
+
+/*
+  🏠 HOME CONTAINER - Contenedor raíz absoluto que ignora AppLayout
+  - Maneja TODA la altura del viewport de forma independiente
+  - Solución universal para todos los dispositivos móviles
+*/
 .home {
-  width: calc(100vw - 1rem);
-  margin-left: auto;
-  margin-right: auto;
-  height: 100vh;
-  height: -webkit-fill-available;
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
+  /* POSICIONAMIENTO ABSOLUTO - Respetando el header */
+  position: fixed;
+  top: 4rem; /* Altura del header en mobile */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0; /* Por debajo de sidebar (999999) pero por encima del fondo */
+
+  /* ALTURA UNIVERSAL - Calculada restando el header */
+  height: calc(100vh - 4rem); /* Fallback tradicional */
+  height: calc(100dvh - 4rem); /* Dynamic viewport - se ajusta con teclado */
+  height: calc(
+    var(--vh, 1vh) * 100 - 4rem
+  ); /* JavaScript-controlled viewport */
+
+  /* Layout básico */
+  width: 100vw; /* Usar todo el ancho del viewport */
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.1);
+
+  /* Evitar interferencias */
+  box-sizing: border-box;
+
+  /* Estilo visual - Sombra más prominente */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
 }
 
-/* Sin sombra cuando no hay proyectos */
-.home.no-projects {
-  box-shadow: none;
-  height: 100% !important;
-  min-height: 100% !important;
-  width: 100% !important;
-  margin: 0 !important;
-  flex: 1 !important;
+/* 
+  📋 HOME CONTENT - Contenedor de contenido simplificado
+  - Ocupa toda la altura del .home
+  - Layout responsivo simple
+*/
+.home__content {
+  /* ALTURA COMPLETA - Sin complicaciones */
+  flex: 1;
+  display: flex;
+  flex-direction: column; /* Mobile: stack vertical */
+  overflow: hidden; /* Evitar scroll accidental */
+  position: relative; /* Crear contexto de apilamiento */
+  z-index: 1; /* Por encima del .home pero por debajo del sidebar */
 }
 
-/* Sin borde inferior cuando no hay proyectos */
-.home__content-main.no-projects {
-  border-bottom: none !important;
-  height: 100% !important;
-  min-height: 100% !important;
-  display: flex !important;
-  flex-direction: column !important;
+/*
+  📝 HOME CONTENT MAIN - Área principal simplificada
+  - Ocupa todo el espacio restante disponible
+  - Sin restricciones de altura
+*/
+.home__content-main {
+  /* ALTURA MÁXIMA - Ocupar todo el espacio disponible */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  overflow-y: auto; /* Permitir scroll interno si es necesario */
+
+  /* Padding móvil mínimo */
+  padding: 0.5rem;
 }
 
-/* Asegurar que el contenedor principal tome toda la altura cuando no hay proyectos */
-.home.no-projects .home__content {
-  height: 100% !important;
-  min-height: 100% !important;
-  flex: 1 !important;
-}
+/* ===========================================
+   RESPONSIVE BREAKPOINTS - DESKTOP SIMPLIFICADO
+   =========================================== */
 
-.home.no-projects .home__content-main {
-  height: 100% !important;
-  min-height: 100% !important;
-  flex: 1 !important;
-  margin: 0 !important;
-  border-radius: 0 !important;
-}
-
-/* Clase personalizada para z-index 40 */
-.z-40 {
-  z-index: 40;
-}
-
-/* Estilos específicos para DragOverlay */
-[data-dnd-overlay] {
-  z-index: 1 !important;
-}
-
-/* Asegurar que los modales estén por encima de todo */
-.fixed.inset-0 {
-  z-index: 99999 !important;
-}
-
-/* Estilos para el overlay del sidebar con blur */
-.sidebar-overlay {
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  background-color: rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease-in-out;
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
-  }
-  to {
-    opacity: 1;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-  }
-}
-
-/* Asegurar que el sidebar esté por encima de todo en mobile */
-@media (max-width: 1023px) {
-  .sidebar {
-    z-index: 9999 !important;
-  }
-
-  .sidebar-container {
-    z-index: 9999 !important;
-  }
-
-  [data-dnd-overlay] {
-    z-index: 1 !important;
-  }
-}
-
-/* En desktop, el sidebar debe comportarse normalmente */
-@media (min-width: 1024px) {
-  .sidebar {
-    z-index: 100 !important;
-  }
-
-  .sidebar-container {
-    z-index: 100 !important;
-  }
-
-  [data-dnd-overlay] {
-    z-index: 1 !important;
-  }
-}
-
-/* Control de scroll global */
-body {
-  overflow-x: hidden !important;
-  overflow-y: hidden !important;
-  touch-action: pan-x !important;
-  height: 100vh;
-  height: -webkit-fill-available;
-}
-
-/* Estilos iniciales para evitar salto visual */
-.home {
-  min-height: 100vh !important;
-  min-height: -webkit-fill-available !important;
-}
-
-/* Estilos específicos para iOS Safari */
-@supports (-webkit-touch-callout: none) {
-  .home {
-    height: -webkit-fill-available !important;
-    min-height: -webkit-fill-available !important;
-  }
-
-  .home__content {
-    height: -webkit-fill-available !important;
-    min-height: -webkit-fill-available !important;
-  }
-
-  .home__content-main {
-    height: -webkit-fill-available !important;
-    min-height: -webkit-fill-available !important;
-  }
-}
-
+/* Tablet y Desktop - Layout horizontal */
 @media (min-width: 640px) {
   .home {
-    width: calc(100vw - 1.5rem);
-    height: 100vh;
-    height: -webkit-fill-available;
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
+    /* Ajustar para header de 4.5rem */
+    top: 4.5rem;
+    height: calc(100vh - 4.5rem);
+    height: calc(100dvh - 4.5rem);
+    height: calc(var(--vh, 1vh) * 100 - 4.5rem);
   }
 }
 
 @media (min-width: 768px) {
   .home {
-    width: calc(100vw - 2rem);
-    height: 100vh;
-    height: -webkit-fill-available;
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
+    /* Ajustar para header de 5rem */
+    top: 5rem;
+    height: calc(100vh - 5rem);
+    height: calc(100dvh - 5rem);
+    height: calc(var(--vh, 1vh) * 100 - 5rem);
   }
 }
 
 @media (min-width: 1024px) {
   .home {
-    width: calc(100vw - 3rem);
-    height: 100vh;
-    height: -webkit-fill-available;
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
+    /* En desktop: posición relativa y altura automática */
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    height: auto;
+    width: calc(100% - 1rem);
+    margin: 0.5rem;
+  }
+
+  .home__content {
+    /* Layout horizontal: sidebar | main */
+    flex-direction: row;
+  }
+
+  .home__content-main {
+    /* Padding mayor en desktop */
+    padding: 1.5rem;
+    background-color: #f3f4f6;
+    border-bottom-right-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+    border-bottom: 4px solid #d1d5db;
   }
 }
 
 @media (min-width: 1280px) {
   .home {
-    width: calc(100vw - 4rem);
-    height: 100vh;
-    height: -webkit-fill-available;
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
+    /* En desktop XL mantener comportamiento normal */
+    position: relative;
+    top: auto;
+    height: auto;
   }
 }
 
-@media (min-width: 1536px) {
-  .home {
-    width: calc(100vw - 5rem);
-    height: 100vh;
-    height: -webkit-fill-available;
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-  }
+/* ===========================================
+   ESTADOS ESPECIALES
+   =========================================== */
+
+/* Cuando no hay proyectos */
+.home.no-projects {
+  box-shadow: none;
+  width: 100%;
+  margin: 0;
 }
 
-.home__content {
-  min-height: 100% !important;
-  flex: 1 !important;
-  height: 100vh !important;
-  height: -webkit-fill-available !important;
+.home__content-main.no-projects {
+  border-bottom: none;
+  background-color: transparent;
+  padding: 1rem;
+  border-radius: 1rem;
 }
 
-.home__content-main {
-  min-height: 100% !important;
-  flex: 1 !important;
-  height: 100vh !important;
-  height: -webkit-fill-available !important;
-}
+/* ===========================================
+   CONTROL DE SCROLL EN LISTAS
+   =========================================== */
 
-/* Permitir scroll solo en contenedores de listas */
+/*
+  📜 LIST CONTAINERS - Aquí es donde DEBE ocurrir el scroll
+  - Las listas individuales tienen scroll interno
+  - El resto de la app NO debe hacer scroll
+*/
 .list__container {
-  overflow-y: auto !important;
-  touch-action: pan-y !important;
-  -webkit-overflow-scrolling: touch !important;
-  max-height: 100% !important;
+  overflow-y: auto;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+  max-height: 100%;
+
+  /* Scrollbar personalizado */
   scrollbar-width: thin;
   scrollbar-color: #cbd5e0 #f7fafc;
 }
@@ -235,4 +188,33 @@ body {
 
 .list__container::-webkit-scrollbar-thumb:hover {
   background: #a0aec0;
+}
+
+/* ===========================================
+   MEJORAS VISUALES - SOMBRAS Y BORDES
+   =========================================== */
+
+/* Mejorar sombras de elementos internos */
+.home__content-main {
+  /* Sombra sutil en el área principal */
+  box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Sombras para listas individuales */
+.list {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  background: white;
+}
+
+/* Sombras para tareas */
+.task {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  transition: box-shadow 0.15s ease-in-out;
+}
+
+.task:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }

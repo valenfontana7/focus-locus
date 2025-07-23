@@ -6,6 +6,7 @@ import { useProjectContext } from "../context/ProjectContext";
 import useProjectColors from "../hooks/useProjectColors";
 import Modal from "./Modal";
 import { useState, useEffect, useRef } from "react";
+import "../styles/Sidebar.css";
 
 function Sidebar({ search, onClose }) {
   const {
@@ -52,84 +53,6 @@ function Sidebar({ search, onClose }) {
 
   const sidebarRef = useRef(null);
 
-  // Calcular altura del sidebar dinámicamente usando la misma lógica que Home
-  useEffect(() => {
-    const calculateSidebarHeight = () => {
-      if (sidebarRef.current) {
-        const viewportHeight = window.innerHeight;
-
-        // Usar la misma lógica de cálculo que Home
-        const width = window.innerWidth;
-        let headerHeight, headerMargin;
-
-        if (width >= 1280) {
-          headerHeight = 6; // 6rem
-          headerMargin = 1.5; // 1.5rem
-        } else if (width >= 1024) {
-          headerHeight = 5.5; // 5.5rem
-          headerMargin = 1.25; // 1.25rem
-        } else if (width >= 768) {
-          headerHeight = 5; // 5rem
-          headerMargin = 1; // 1rem
-        } else if (width >= 640) {
-          headerHeight = 4.5; // 4.5rem
-          headerMargin = 0.75; // 0.75rem
-        } else {
-          headerHeight = 4; // 4rem
-          headerMargin = 0.5; // 0.5rem
-        }
-
-        const headerHeightPx = headerHeight * 16; // Convertir rem a px
-        const headerMarginPx = headerMargin * 16; // Convertir rem a px
-        const appLayoutPadding = 0.25 * 16; // 0.25rem en px
-
-        // Espacio reservado para el header y padding
-        const reservedSpace = 80;
-
-        const totalReservedSpace =
-          headerHeightPx + headerMarginPx + appLayoutPadding + reservedSpace;
-        const availableHeight = viewportHeight - totalReservedSpace;
-
-        // Para el sidebar, usar altura completa del viewport en mobile
-        const isMobile = window.innerWidth < 1024;
-        const sidebarHeight = isMobile
-          ? window.innerHeight
-          : availableHeight - 64;
-
-        sidebarRef.current.style.setProperty(
-          "height",
-          `${sidebarHeight}px`,
-          "important"
-        );
-      }
-    };
-
-    calculateSidebarHeight();
-    window.addEventListener("resize", calculateSidebarHeight);
-
-    return () => window.removeEventListener("resize", calculateSidebarHeight);
-  }, []);
-
-  // Fallback JS para browsers que no soportan 100svh
-  useEffect(() => {
-    function updateSidebarHeight() {
-      if (sidebarRef.current) {
-        const vh = window.visualViewport
-          ? window.visualViewport.height
-          : window.innerHeight;
-        sidebarRef.current.style.height = vh + "px";
-        sidebarRef.current.style.maxHeight = vh + "px";
-      }
-    }
-    updateSidebarHeight();
-    window.addEventListener("resize", updateSidebarHeight);
-    window.addEventListener("orientationchange", updateSidebarHeight);
-    return () => {
-      window.removeEventListener("resize", updateSidebarHeight);
-      window.removeEventListener("orientationchange", updateSidebarHeight);
-    };
-  }, []);
-
   // Función para seleccionar un proyecto y cerrar el sidebar en móviles
   const handleProjectSelect = (project) => {
     setActiveProject(project);
@@ -153,7 +76,7 @@ function Sidebar({ search, onClose }) {
   return (
     <div
       ref={sidebarRef}
-      className="sidebar bg-white w-80 lg:w-80 xl:w-96 pt-8 pl-6 pr-6 pb-6 rounded-bl-2xl flex flex-col min-h-0 lg:relative fixed lg:static top-0 left-0 z-50 lg:z-auto"
+      className="sidebar bg-white w-80 xl:w-76 pt-8 pl-6 pr-6 pb-6 rounded-bl-2xl flex flex-col min-h-0 lg:static fixed top-0 left-0 z-50 lg:z-auto"
     >
       <div className="flex-1 overflow-y-auto min-h-0 px-2 pt-4 pb-20 sm:pb-8 md:pb-4 flex flex-col">
         {/* Botón de cerrar para móviles */}

@@ -27,13 +27,6 @@ function Home() {
     loading,
   } = useProjectContext();
 
-  // Debug log
-  console.log("🏠 Home render:", {
-    loading,
-    projectsLength: projects.length,
-    projects,
-  });
-
   const [search, setSearch] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeId, setActiveId] = useState(null);

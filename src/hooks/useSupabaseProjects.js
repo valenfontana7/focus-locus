@@ -3,11 +3,65 @@ import { dbService } from "../services/database";
 import { useAuth } from "./useAuth";
 import useLocalStorage from "./useLocalStorage";
 
+// Colores disponibles para proyectos
+const COLORS = [
+  "#F87171", // rojo
+  "#FBBF24", // amarillo
+  "#34D399", // verde
+  "#60A5FA", // azul
+  "#A78BFA", // violeta
+  "#F472B6", // rosa
+  "#FCD34D", // dorado
+  "#38BDF8", // celeste
+];
+
+function getRandomColor(usedColors = []) {
+  const available = COLORS.filter((c) => !usedColors.includes(c));
+  if (available.length === 0)
+    return COLORS[Math.floor(Math.random() * COLORS.length)];
+  return available[Math.floor(Math.random() * available.length)];
+}
+
+// Función para manejar colores de proyectos de forma estable
+function manageProjectColors(projectNames) {
+  const currentColors = JSON.parse(
+    localStorage.getItem("focusLocusProjectColors") || "{}"
+  );
+
+  let updated = { ...currentColors };
+  let hasChanges = false;
+
+  // Asignar colores solo a proyectos que realmente no tienen color
+  projectNames.forEach((name) => {
+    if (!updated[name]) {
+      const newColor = getRandomColor(Object.values(updated));
+      updated[name] = newColor;
+      hasChanges = true;
+    }
+  });
+
+  // Limpiar proyectos eliminados
+  Object.keys(updated).forEach((name) => {
+    if (!projectNames.includes(name)) {
+      delete updated[name];
+      hasChanges = true;
+    }
+  });
+
+  // Actualizar localStorage si hay cambios
+  if (hasChanges) {
+    localStorage.setItem("focusLocusProjectColors", JSON.stringify(updated));
+  }
+
+  return updated;
+}
+
 // Hook híbrido que usa Supabase cuando está disponible y localStorage como fallback
 export default function useSupabaseProjects() {
   const { user, isOnline } = useAuth();
   const [projects, setProjects] = useState([]);
   const [projectTasks, setProjectTasks] = useState({});
+  const [projectColors, setProjectColors] = useState({});
   const [loading, setLoading] = useState(true);
   const [syncStatus, setSyncStatus] = useState("idle"); // 'idle', 'syncing', 'error', 'success'
 
@@ -29,6 +83,14 @@ export default function useSupabaseProjects() {
   const hasInitialLoadRef = useRef(false);
   const currentUserIdRef = useRef(null);
 
+  // Cargar colores iniciales del localStorage
+  useEffect(() => {
+    const initialColors = JSON.parse(
+      localStorage.getItem("focusLocusProjectColors") || "{}"
+    );
+    setProjectColors(initialColors);
+  }, []);
+
   // Cargar datos iniciales - optimizado para evitar loops
   useEffect(() => {
     // Solo cargar si es un usuario nuevo o es la primera carga
@@ -44,7 +106,6 @@ export default function useSupabaseProjects() {
     const loadData = async () => {
       if (!isMounted) return;
 
-      console.log("🔄 Loading projects...", { user: !!user, isOnline });
       setLoading(true);
       try {
         const projectsData = await dbService.getProjects(user?.id);
@@ -53,25 +114,26 @@ export default function useSupabaseProjects() {
 
         if (isOnline && user) {
           // Modo online con Supabase
-          console.log(
-            "📡 Online mode - projects from Supabase:",
-            projectsData.length
-          );
-          setProjects(projectsData.map((p) => p.name));
+          const projectNames = projectsData.map((p) => p.name); // Notificar que se está cargando desde Supabase para preservar colores
+          window.dispatchEvent(new CustomEvent("supabase-loading-start"));
+
+          // Manejar colores de proyectos de forma estable
+          const updatedColors = manageProjectColors(projectNames);
+          setProjectColors(updatedColors);
+
+          setProjects(projectNames);
 
           // Cargar tareas para cada proyecto
           const tasksData = {};
           for (const project of projectsData) {
             if (!isMounted) return; // Verificar antes de cada operación async
-            console.log(`📋 Loading tasks for project: ${project.name} (ID: ${project.id})`);
             try {
               tasksData[project.name] = await dbService.getProjectTasks(
                 project.id,
                 user.id
               );
-              console.log(`✅ Tasks loaded for ${project.name}:`, tasksData[project.name]);
             } catch (error) {
-              console.error(`❌ Error loading tasks for ${project.name}:`, error);
+              console.error(`Error loading tasks for ${project.name}:`, error);
               // Asegurar que al menos hay un objeto vacío para evitar errores
               tasksData[project.name] = {
                 pendientes: [],
@@ -85,14 +147,22 @@ export default function useSupabaseProjects() {
 
           setProjectTasks(tasksData);
 
-          // Sincronizar con localStorage
-          setLocalProjects(projectsData.map((p) => p.name));
-          setLocalProjectTasks(tasksData);
+          // Sincronizar con localStorage usando referencias directas
+          localStorage.setItem(
+            "focusLocusProjects",
+            JSON.stringify(projectNames)
+          );
+          localStorage.setItem(
+            "focusLocusProjectTasks",
+            JSON.stringify(tasksData)
+          );
 
           setSyncStatus("success");
+
+          // Notificar que terminó la carga desde Supabase
+          window.dispatchEvent(new CustomEvent("supabase-loading-end"));
         } else {
           // Modo offline - usar localStorage directamente
-          console.log("💾 Offline mode - using localStorage");
           const currentLocalProjects = JSON.parse(
             localStorage.getItem("focusLocusProjects") || "[]"
           );
@@ -102,6 +172,11 @@ export default function useSupabaseProjects() {
 
           setProjects(currentLocalProjects);
           setProjectTasks(currentLocalTasks);
+
+          // También cargar colores en modo offline
+          const currentColors = manageProjectColors(currentLocalProjects);
+          setProjectColors(currentColors);
+
           setSyncStatus("offline");
         }
       } catch (error) {
@@ -120,27 +195,19 @@ export default function useSupabaseProjects() {
         setSyncStatus("error");
       } finally {
         if (isMounted) {
-          console.log("✅ Loading complete");
           setLoading(false);
         }
       }
     };
 
     // Solo cargar si hay cambios importantes
-    console.log("🔍 useEffect trigger:", {
-      user: !!user,
-      userDefined: user !== undefined,
-      isOnline,
-      onlineDefined: isOnline !== undefined,
-      shouldLoad: isNewUser,
-    });
-
     loadData();
 
     return () => {
       isMounted = false; // Cleanup
     };
-  }, [user, isOnline, setLocalProjects, setLocalProjectTasks]); // Incluir todas las dependencias necesarias
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, isOnline]); // Solo depender de valores estables
 
   // Función para cargar proyectos (ahora separada para reutilización)
   const loadProjects = async () => {
@@ -155,10 +222,27 @@ export default function useSupabaseProjects() {
         // Cargar tareas para cada proyecto
         const tasksData = {};
         for (const project of projectsData) {
-          tasksData[project.name] = await dbService.getProjectTasks(
-            project.id,
-            user.id
+          console.log(
+            `📋 Loading tasks for project: ${project.name} (ID: ${project.id})`
           );
+          try {
+            tasksData[project.name] = await dbService.getProjectTasks(
+              project.id,
+              user.id
+            );
+            console.log(
+              `✅ Tasks loaded for ${project.name}:`,
+              tasksData[project.name]
+            );
+          } catch (error) {
+            console.error(`❌ Error loading tasks for ${project.name}:`, error);
+            // Asegurar que al menos hay un objeto vacío para evitar errores
+            tasksData[project.name] = {
+              pendientes: [],
+              enCurso: [],
+              terminadas: [],
+            };
+          }
         }
         setProjectTasks(tasksData);
 
@@ -211,6 +295,10 @@ export default function useSupabaseProjects() {
       setProjectTasks(newProjectTasks);
       setLocalProjectTasks(newProjectTasks);
 
+      // Manejar colores para el nuevo proyecto
+      const updatedColors = manageProjectColors(newProjects);
+      setProjectColors(updatedColors);
+
       setSyncStatus("success");
       return true;
     } catch (error) {
@@ -244,6 +332,10 @@ export default function useSupabaseProjects() {
       delete newProjectTasks[projectName];
       setProjectTasks(newProjectTasks);
       setLocalProjectTasks(newProjectTasks);
+
+      // Manejar colores (eliminar color del proyecto eliminado)
+      const updatedColors = manageProjectColors(newProjects);
+      setProjectColors(updatedColors);
 
       // Si era el proyecto activo, cambiar a otro
       if (activeProject === projectName) {
@@ -283,13 +375,6 @@ export default function useSupabaseProjects() {
         }
       }
 
-      // Disparar evento para preservar colores
-      window.dispatchEvent(
-        new CustomEvent("project-renamed", {
-          detail: { oldName, newName: trimmedNewName },
-        })
-      );
-
       // Actualizar estado local
       const newProjects = projects.map((p) =>
         p === oldName ? trimmedNewName : p
@@ -304,6 +389,18 @@ export default function useSupabaseProjects() {
         delete newProjectTasks[oldName];
         setProjectTasks(newProjectTasks);
         setLocalProjectTasks(newProjectTasks);
+      }
+
+      // Manejar cambio de colores para el proyecto renombrado
+      const updatedColors = { ...projectColors };
+      if (updatedColors[oldName]) {
+        updatedColors[trimmedNewName] = updatedColors[oldName];
+        delete updatedColors[oldName];
+        setProjectColors(updatedColors);
+        localStorage.setItem(
+          "focusLocusProjectColors",
+          JSON.stringify(updatedColors)
+        );
       }
 
       // Actualizar proyecto activo si es necesario
@@ -327,15 +424,144 @@ export default function useSupabaseProjects() {
 
       // Si estamos online, sincronizar cambios importantes con Supabase
       if (isOnline && user) {
-        // Para mantener simplicidad, por ahora solo actualizamos localmente
-        // En una implementación completa, aquí sincronizarías cada tarea modificada
-        console.log("TODO: Sincronizar tareas específicas con Supabase");
+        try {
+          // Buscar el proyecto en Supabase para obtener su ID
+          const projectsData = await dbService.getProjects(user.id);
+          const project = projectsData.find((p) => p.name === projectName);
+
+          if (project) {
+            // Obtener tareas actuales de Supabase para comparar
+            const currentSupabaseTasks = await dbService.getProjectTasks(
+              project.id,
+              user.id
+            );
+
+            // Convertir las tareas nuevas a formato plano para comparar
+            const allNewTasks = [
+              ...newTasks.pendientes.map((t) => ({
+                ...t,
+                status: "pendientes",
+              })),
+              ...newTasks.enCurso.map((t) => ({ ...t, status: "enCurso" })),
+              ...newTasks.terminadas.map((t) => ({
+                ...t,
+                status: "terminadas",
+              })),
+            ];
+
+            // Obtener tareas actuales de Supabase en formato plano
+            const allCurrentTasks = [
+              ...currentSupabaseTasks.pendientes.map((t) => ({
+                ...t,
+                status: "pendientes",
+              })),
+              ...currentSupabaseTasks.enCurso.map((t) => ({
+                ...t,
+                status: "enCurso",
+              })),
+              ...currentSupabaseTasks.terminadas.map((t) => ({
+                ...t,
+                status: "terminadas",
+              })),
+            ];
+
+            // Identificar tareas a eliminar (están en Supabase pero no en el nuevo estado)
+            const tasksToDelete = allCurrentTasks.filter(
+              (currentTask) =>
+                !allNewTasks.find((newTask) => newTask.id === currentTask.id)
+            );
+
+            // Identificar tareas a crear (están en el nuevo estado pero no en Supabase)
+            const tasksToCreate = allNewTasks.filter(
+              (newTask) =>
+                !allCurrentTasks.find(
+                  (currentTask) => currentTask.id === newTask.id
+                )
+            );
+
+            // Identificar tareas a actualizar (están en ambos pero con diferencias)
+            const tasksToUpdate = allNewTasks.filter((newTask) => {
+              const currentTask = allCurrentTasks.find(
+                (ct) => ct.id === newTask.id
+              );
+              if (!currentTask) return false;
+
+              // Comparar campos importantes para detectar cambios
+              return (
+                newTask.nombre !== currentTask.nombre ||
+                newTask.descripcion !== currentTask.descripcion ||
+                newTask.expira !== currentTask.expira ||
+                newTask.prioridad !== currentTask.prioridad ||
+                newTask.status !== currentTask.status ||
+                newTask.position !== currentTask.position
+              );
+            });
+
+            // Ejecutar operaciones en Supabase
+            await Promise.all([
+              // Eliminar tareas
+              ...tasksToDelete.map((task) =>
+                dbService.deleteTask(task.id, user.id)
+              ),
+
+              // Crear tareas nuevas
+              ...tasksToCreate.map((task) =>
+                dbService.createTask(
+                  {
+                    project_id: project.id,
+                    nombre: task.nombre,
+                    descripcion: task.descripcion || "",
+                    expira: task.expira,
+                    prioridad: task.prioridad,
+                    status: task.status,
+                    position: task.position || 0,
+                  },
+                  user.id
+                )
+              ),
+
+              // Actualizar tareas modificadas
+              ...tasksToUpdate.map((task) =>
+                dbService.updateTask(
+                  task.id,
+                  {
+                    nombre: task.nombre,
+                    descripcion: task.descripcion || "",
+                    expira: task.expira,
+                    prioridad: task.prioridad,
+                    status: task.status,
+                    position: task.position || 0,
+                  },
+                  user.id
+                )
+              ),
+            ]);
+
+            console.log(
+              `✅ Sincronizadas tareas del proyecto "${projectName}":`,
+              {
+                eliminadas: tasksToDelete.length,
+                creadas: tasksToCreate.length,
+                actualizadas: tasksToUpdate.length,
+              }
+            );
+          }
+        } catch (error) {
+          console.error("Error sincronizando tareas con Supabase:", error);
+          // Continuar con actualización local aunque falle Supabase
+        }
       }
 
       // Actualizar estado local
       const newProjectTasks = { ...projectTasks, [projectName]: newTasks };
       setProjectTasks(newProjectTasks);
       setLocalProjectTasks(newProjectTasks);
+
+      // Sincronizar también con localStorage directamente
+      localStorage.setItem(
+        "focusLocusProjectTasks",
+        JSON.stringify(newProjectTasks)
+      );
 
       setSyncStatus("success");
     } catch (error) {
@@ -390,6 +616,12 @@ export default function useSupabaseProjects() {
       setProjectTasks(newProjectTasks);
       setLocalProjectTasks(newProjectTasks);
 
+      // Sincronizar también con localStorage directamente
+      localStorage.setItem(
+        "focusLocusProjectTasks",
+        JSON.stringify(newProjectTasks)
+      );
+
       setSyncStatus("success");
     } catch (error) {
       console.error("Error agregando tarea:", error);
@@ -411,6 +643,11 @@ export default function useSupabaseProjects() {
     }
   };
 
+  // Función para obtener el color de un proyecto
+  const getColor = (projectName) => {
+    return projectColors[projectName] || COLORS[0];
+  };
+
   return {
     projects,
     projectTasks,
@@ -425,6 +662,7 @@ export default function useSupabaseProjects() {
     syncData,
     setProjects,
     setProjectTasks,
+    getColor, // Nueva función para obtener colores
   };
 }
 

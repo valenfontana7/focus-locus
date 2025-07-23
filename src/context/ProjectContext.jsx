@@ -26,6 +26,7 @@ export function ProjectProvider({ children }) {
     syncData,
     setProjects,
     setProjectTasks,
+    getColor,
   } = useSupabaseProjects();
 
   // Establecer automáticamente el primer proyecto como activo cuando se crea
@@ -58,6 +59,7 @@ export function ProjectProvider({ children }) {
         syncStatus,
         isOnline,
         syncData,
+        getColor, // Función para obtener colores de proyectos
       }}
     >
       {children}

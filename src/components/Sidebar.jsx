@@ -3,7 +3,6 @@ import Button from "./Button";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import { useProjectContext } from "../context/ProjectContext";
-import useProjectColors from "../hooks/useProjectColors";
 import Modal from "./Modal";
 import { useState, useEffect, useRef } from "react";
 import "../styles/Sidebar.css";
@@ -15,8 +14,8 @@ function Sidebar({ search, onClose }) {
     projects,
     addProject,
     deleteProject,
+    getColor,
   } = useProjectContext();
-  const { getColor } = useProjectColors(projects);
   const [deleteModal, setDeleteModal] = useState({
     open: false,
     projectName: "",

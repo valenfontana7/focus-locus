@@ -140,7 +140,6 @@ class DatabaseService {
 
   // TAREAS
   async getProjectTasks(projectId, userId = null) {
-    console.log('📋 Getting tasks for project:', { projectId, userId: !!userId });
     if (this.useSupabase && userId) {
       try {
         const { data, error } = await supabase
@@ -151,8 +150,6 @@ class DatabaseService {
           .order("position", { ascending: true });
 
         if (error) throw error;
-
-        console.log('📋 Tasks found:', data.length);
 
         // Agrupar tareas por estado
         const groupedTasks = {

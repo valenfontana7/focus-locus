@@ -28,6 +28,9 @@ export default function useProjectColors(projects) {
   // Ref para rastrear renombramientos en proceso
   const renamingInProgress = React.useRef(new Set());
 
+  // Ref para rastrear si se está cargando desde Supabase
+  const supabaseLoading = React.useRef(false);
+
   // Escuchar evento de renombramiento de proyecto
   React.useEffect(() => {
     const handleProjectRenamed = (event) => {
@@ -60,6 +63,34 @@ export default function useProjectColors(projects) {
     };
   }, [setProjectColors]);
 
+  // Escuchar eventos de carga de Supabase
+  React.useEffect(() => {
+    const handleSupabaseLoadingStart = () => {
+      supabaseLoading.current = true;
+    };
+
+    const handleSupabaseLoadingEnd = () => {
+      supabaseLoading.current = false;
+    };
+
+    window.addEventListener(
+      "supabase-loading-start",
+      handleSupabaseLoadingStart
+    );
+    window.addEventListener("supabase-loading-end", handleSupabaseLoadingEnd);
+
+    return () => {
+      window.removeEventListener(
+        "supabase-loading-start",
+        handleSupabaseLoadingStart
+      );
+      window.removeEventListener(
+        "supabase-loading-end",
+        handleSupabaseLoadingEnd
+      );
+    };
+  }, []);
+
   // Asignar color a proyectos nuevos y limpiar proyectos eliminados
   React.useEffect(() => {
     // Evitar múltiples ejecuciones usando un timeout
@@ -68,9 +99,13 @@ export default function useProjectColors(projects) {
         let changed = false;
         const updated = { ...prev };
 
-        // Asignar colores a proyectos nuevos
+        // Asignar colores a proyectos nuevos (solo si no se está cargando desde Supabase)
         (projects || []).forEach((name) => {
-          if (!updated[name] && !renamingInProgress.current.has(name)) {
+          if (
+            !updated[name] &&
+            !renamingInProgress.current.has(name) &&
+            !supabaseLoading.current
+          ) {
             const newColor = getRandomColor(Object.values(updated));
             updated[name] = newColor;
             changed = true;

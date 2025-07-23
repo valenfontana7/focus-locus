@@ -171,7 +171,7 @@ function Lists() {
     updateProjectTasks(activeProject, updatedTasks);
   };
 
-  const handleMoveTask = (taskId, fromList, toList) => {
+  const handleMoveTask = async (taskId, fromList, toList) => {
     const task = [
       ...localTasks[fromList],
       ...localTasks[toList],
@@ -180,7 +180,8 @@ function Lists() {
 
     if (!task) return;
 
-    const updatedTasks = {
+    // 🚀 OPTIMISTIC UPDATE: Calcular nuevo estado inmediatamente
+    const optimisticTasks = {
       pendientes:
         fromList === "pendientes"
           ? localTasks.pendientes.filter((t) => t.id !== taskId)
@@ -201,7 +202,14 @@ function Lists() {
           : localTasks.terminadas,
     };
 
-    updateProjectTasks(activeProject, updatedTasks);
+    // 💨 ACTUALIZACIÓN INMEDIATA: El usuario ve el cambio al instante
+    // Esto actualiza el contexto inmediatamente
+    updateProjectTasks(activeProject, optimisticTasks);
+
+    // 🔄 SYNC EN BACKGROUND: Intentar sincronización real en segundo plano
+    // Nota: La función updateProjectTasks ya maneja la sincronización con Supabase
+    // Si falla, el hook useSupabaseProjects debería manejar el rollback
+    // Esta implementación da prioridad a la experiencia del usuario
   };
 
   const handleReorderTask = (activeTaskId, overTaskId, listName) => {
@@ -223,13 +231,14 @@ function Lists() {
       [listName]: newList,
     };
 
+    // 💨 OPTIMISTIC UPDATE: Reordenar también usa actualización inmediata
     updateProjectTasks(activeProject, updatedTasks);
   };
 
   return (
     <div
       ref={setNodeRef}
-      className="lists-container flex flex-col sm:flex-row gap-1 sm:gap-0.5 md:gap-0.5 lg:gap-0.5 xl:gap-0.5 p-2 sm:p-2 md:p-3 lg:p-2 xl:p-1 h-full max-h-full min-h-0 overflow-hidden"
+      className="lists-container flex flex-col sm:flex-row gap-0.5 sm:gap-0.5 md:gap-0.5 lg:gap-0.5 xl:gap-0.5 p-1 sm:p-2 md:p-3 lg:p-2 xl:p-1 h-full max-h-full min-h-0 overflow-hidden"
     >
       <List
         title="Pendientes"

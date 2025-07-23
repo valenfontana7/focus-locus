@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuthContext } from "../context/AuthContext";
+import AuthDebug from "./AuthDebug";
 
 export default function Login() {
   const { signIn, signUp, signInWithGoogle, loading, isSupabaseConfigured } =
@@ -8,6 +9,57 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
   const [error, setError] = useState("");
+  const [showDebug, setShowDebug] = useState(false);
+  const pendingErrorRef = useRef(null);
+  const wasLoadingRef = useRef(false);
+
+  // Cargar error persistente al montar el componente
+  useEffect(() => {
+    const persistedError = localStorage.getItem("login-error");
+    if (persistedError) {
+      console.log("🔄 Cargando error persistente:", persistedError);
+      setError(persistedError);
+      localStorage.removeItem("login-error");
+    }
+  }, []);
+
+  // Función para establecer error con persistencia
+  const setErrorWithPersistence = (errorMessage) => {
+    console.log("💾 Estableciendo error con persistencia:", errorMessage);
+    setError(errorMessage);
+    if (errorMessage) {
+      localStorage.setItem("login-error", errorMessage);
+    } else {
+      localStorage.removeItem("login-error");
+    }
+  };
+
+  // Debug: log del estado error en cada render (remover en producción)
+  // console.log("🔄 Login render - Estado error:", {
+  //   error,
+  //   length: error?.length,
+  // });
+
+  // Efecto para detectar cambios en loading y establecer errores pendientes
+  useEffect(() => {
+    console.log("🔄 useEffect - loading cambió:", {
+      loading,
+      wasLoading: wasLoadingRef.current,
+      pendingError: pendingErrorRef.current,
+    });
+
+    // Si loading cambió de true a false y hay un error pendiente
+    if (wasLoadingRef.current && !loading && pendingErrorRef.current) {
+      console.log(
+        "✅ Loading terminó, estableciendo error pendiente:",
+        pendingErrorRef.current
+      );
+      setErrorWithPersistence(pendingErrorRef.current);
+      pendingErrorRef.current = null;
+    }
+
+    wasLoadingRef.current = loading;
+  }, [loading]);
 
   // Si Supabase no está configurado, no mostrar login
   if (!isSupabaseConfigured) {
@@ -37,30 +89,99 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    console.log("🎬 handleSubmit iniciado - Estado error antes:", { error });
+    setErrorWithPersistence("");
+    console.log("🧹 Error limpiado al inicio de handleSubmit");
 
     if (!email || !password) {
-      setError("Email y contraseña son requeridos");
+      setErrorWithPersistence("Email y contraseña son requeridos");
       return;
     }
 
+    console.log("🔐 Intentando autenticación:", { email, isRegistering });
+
+    let errorToShow = null;
+
     try {
       if (isRegistering) {
-        await signUp(email, password);
-        setError("¡Cuenta creada! Revisa tu email para verificar la cuenta.");
+        console.log("📝 Iniciando registro...");
+        const result = await signUp(email, password);
+        console.log("✅ Registro exitoso:", result);
+        setErrorWithPersistence(
+          "¡Cuenta creada! Revisa tu email para verificar la cuenta."
+        );
       } else {
-        await signIn(email, password);
+        console.log("🔑 Iniciando sesión...");
+        const result = await signIn(email, password);
+        console.log("✅ Inicio de sesión exitoso:", result);
+        // Limpiar cualquier error previo en caso de éxito
+        setErrorWithPersistence("");
       }
     } catch (error) {
-      setError(error.message || "Error de autenticación");
+      console.error("❌ Error de autenticación:", error);
+      console.log("🔍 Debug error:", {
+        message: error.message,
+        toString: error.toString(),
+        name: error.name,
+        fullError: error,
+      });
+
+      // Mejorar los mensajes de error
+      let errorMessage = "Error de autenticación";
+
+      // Convertir el error a string para detectar el mensaje
+      const errorString = error.toString() || error.message || "";
+      console.log("🔍 Error string:", errorString);
+
+      if (errorString.includes("Invalid login credentials")) {
+        errorMessage = `Email o contraseña incorrectos. ¿Es tu primera vez? Puedes registrarte en su lugar.`;
+      } else if (errorString.includes("Email not confirmed")) {
+        errorMessage =
+          "Debes confirmar tu email antes de iniciar sesión. Revisa tu bandeja de entrada.";
+      } else if (errorString.includes("User already registered")) {
+        errorMessage = `El email ${email} ya tiene una cuenta. Usa el botón de abajo para cambiar a modo login.`;
+        console.log("✅ Mensaje establecido:", errorMessage);
+      } else if (errorString.includes("Invalid email")) {
+        errorMessage = "El formato del email no es válido.";
+      } else if (errorString.includes("Password")) {
+        errorMessage = "La contraseña debe tener al menos 6 caracteres.";
+      } else if (errorString.includes("weak password")) {
+        errorMessage = "La contraseña es muy débil. Usa al menos 6 caracteres.";
+      } else {
+        errorMessage = error.message || error.toString() || "Error desconocido";
+      }
+
+      console.log("🎯 Preparando error para mostrar:", errorMessage);
+      errorToShow = errorMessage;
+    }
+
+    // Establecer el error como pendiente para cuando el loading termine
+    if (errorToShow) {
+      console.log("🔄 Estableciendo error pendiente:", errorToShow);
+      pendingErrorRef.current = errorToShow;
+
+      // También intentar establecer inmediatamente si loading ya es false
+      if (!loading) {
+        console.log(
+          "⚡ Loading ya es false, estableciendo error inmediatamente"
+        );
+        console.log("⚡ Estado actual antes de setError:", { error, loading });
+        setErrorWithPersistence(errorToShow);
+        console.log("⚡ setErrorWithPersistence llamado con:", errorToShow);
+        pendingErrorRef.current = null;
+      }
     }
   };
-
   const handleGoogleSignIn = async () => {
     try {
-      await signInWithGoogle();
+      console.log("🔐 Iniciando autenticación con Google...");
+      const result = await signInWithGoogle();
+      console.log("✅ Google Sign In iniciado:", result);
     } catch (error) {
-      setError(error.message || "Error de autenticación con Google");
+      console.error("❌ Error de autenticación con Google:", error);
+      setErrorWithPersistence(
+        error.message || "Error de autenticación con Google"
+      );
     }
   };
 
@@ -79,9 +200,76 @@ export default function Login() {
           </p>
         </div>
 
+        {/* Debug del mensaje de error (remover en producción) */}
+        {/* {console.log("🔍 Evaluando error para mostrar:", {
+          error,
+          hasError: !!error,
+          errorLength: error?.length,
+          willShow: error && error.length > 0,
+        })} */}
+
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded p-3 mb-4">
-            <p className="text-red-800 text-sm">{error}</p>
+          <div
+            className={`border rounded p-3 mb-4 ${
+              error.includes("ya tiene una cuenta") ||
+              error.includes("Cambiado a modo login")
+                ? "bg-blue-50 border-blue-200"
+                : error.includes("¡Cuenta creada!")
+                ? "bg-green-50 border-green-200"
+                : "bg-red-50 border-red-200"
+            }`}
+          >
+            {/* Mostrar mensaje personalizado para usuario existente */}
+            {error.includes("ya tiene una cuenta") ? (
+              <div>
+                <p className="text-blue-800 text-sm">
+                  {isRegistering
+                    ? "Este email ya tiene una cuenta. Cambiando a modo login..."
+                    : "Este email ya tiene una cuenta. Inicia sesión con tu método habitual (contraseña o Google)."}
+                </p>
+
+                {/* Botón para cambiar a login cuando el usuario ya existe */}
+                {isRegistering && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsRegistering(false);
+                      setErrorWithPersistence("");
+                    }}
+                    className="mt-2 w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 text-sm"
+                  >
+                    Ir a Iniciar Sesión
+                  </button>
+                )}
+              </div>
+            ) : (
+              <p
+                className={`text-sm ${
+                  error.includes("Cambiado a modo login")
+                    ? "text-blue-800"
+                    : error.includes("¡Cuenta creada!")
+                    ? "text-green-800"
+                    : "text-red-800"
+                }`}
+              >
+                {error}
+              </p>
+            )}
+
+            {/* Botón para cambiar a registro cuando las credenciales son incorrectas */}
+            {error.includes("Email o contraseña incorrectos") &&
+              !isRegistering && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsRegistering(true);
+                    setErrorWithPersistence("");
+                  }}
+                  className="mt-2 w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 text-sm"
+                >
+                  Crear Cuenta Nueva
+                </button>
+              )}
           </div>
         )}
 
@@ -184,6 +372,24 @@ export default function Login() {
               : "¿No tienes cuenta? Regístrate"}
           </button>
         </div>
+
+        {/* Botón de Debug */}
+        <div className="mt-4 text-center">
+          <button
+            type="button"
+            onClick={() => setShowDebug(!showDebug)}
+            className="text-gray-500 hover:text-gray-700 text-xs"
+          >
+            {showDebug ? "Ocultar Debug" : "Mostrar Debug"}
+          </button>
+        </div>
+
+        {/* Componente de Debug */}
+        {showDebug && (
+          <div className="mt-6">
+            <AuthDebug />
+          </div>
+        )}
       </div>
     </div>
   );

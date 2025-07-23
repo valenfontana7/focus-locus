@@ -19,6 +19,7 @@
   }
 }
 
+/* Alturas responsive del header */
 @media (min-width: 640px) {
   .header {
     height: 4.5rem;

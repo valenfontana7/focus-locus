@@ -3,32 +3,21 @@
    =========================================== */
 
 /*
-  🏠 HOME CONTAINER - Contenedor raíz absoluto que ignora AppLayout
-  - Maneja TODA la altura del viewport de forma independiente
-  - Solución universal para todos los dispositivos móviles
+  🏠 HOME CONTAINER - Contenedor que usa el espacio disponible después del header
+  - Usa flex: 1 para ocupar todo el espacio restante
+  - Se adapta automáticamente al tamaño del header
 */
 .home {
-  /* POSICIONAMIENTO ABSOLUTO - Respetando el header */
-  position: fixed;
-  top: 4rem; /* Altura del header en mobile */
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 0; /* Por debajo de sidebar (999999) pero por encima del fondo */
-
-  /* ALTURA UNIVERSAL - Calculada restando el header */
-  height: calc(100vh - 4rem); /* Fallback tradicional */
-  height: calc(100dvh - 4rem); /* Dynamic viewport - se ajusta con teclado */
-  height: calc(
-    var(--vh, 1vh) * 100 - 4rem
-  ); /* JavaScript-controlled viewport */
-
-  /* Layout básico */
-  width: 100vw; /* Usar todo el ancho del viewport */
-  margin: 0;
-  padding: 0;
+  /* FLEX LAYOUT - Ocupar todo el espacio disponible */
+  flex: 1;
   display: flex;
   flex-direction: column;
+
+  /* Layout básico */
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 
   /* Evitar interferencias */
   box-sizing: border-box;
@@ -37,9 +26,7 @@
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.05);
   /* Sin border-radius en mobile para que llegue hasta los bordes */
-}
-
-/* 
+} /* 
   📋 HOME CONTENT - Contenedor de contenido simplificado
   - Ocupa toda la altura del .home
   - Layout responsivo simple
@@ -91,103 +78,83 @@
 /* Tablet y Desktop - Layout horizontal */
 @media (min-width: 640px) {
   .home {
-    /* Ajustar para header de 4.5rem */
-    top: 4.5rem;
-    height: calc(100vh - 4.5rem);
-    height: calc(100dvh - 4.5rem);
-    height: calc(var(--vh, 1vh) * 100 - 4.5rem);
+    /* Mantener flex: 1 para usar espacio disponible */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 }
 
 @media (min-width: 768px) {
   .home {
-    /* Ajustar para header de 5rem */
-    top: 5rem;
-    height: calc(100vh - 5rem);
-    height: calc(100dvh - 5rem);
-    height: calc(var(--vh, 1vh) * 100 - 5rem);
+    /* Mantener flex: 1 para usar espacio disponible */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 }
 
 @media (min-width: 1024px) {
   .home {
-    /* En desktop: mantener uso completo del espacio disponible */
-    position: relative;
-    top: auto;
-    left: auto;
-    right: auto;
-    bottom: auto;
-    /* Usar toda la altura disponible en desktop - sin restricciones */
-    height: 100%;
-    min-height: 100%; /* Usar toda la altura del contenedor padre */
-    max-height: 100%; /* Evitar overflow */
+    /* En desktop: usar toda la altura disponible del contenedor padre */
+    flex: 1;
     width: calc(100% - 1rem);
     margin: 0.5rem;
-    /* Agregar border-radius solo en desktop */
     border-radius: 16px;
-    overflow: hidden; /* Evitar scroll en el contenedor principal */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 
   .home__content {
     /* Layout horizontal: sidebar | main */
     flex-direction: row;
-    /* Asegurar que use toda la altura disponible */
-    height: 100%;
-    min-height: 100%;
-    max-height: 100%;
+    flex: 1;
+    display: flex;
     overflow: hidden;
+    height: 100%;
   }
 
   .home__content-main {
-    /* Usar toda la altura disponible */
-    height: 100%;
-    min-height: 100%;
-    max-height: 100%;
-    /* Padding mínimo en desktop para maximizar espacio */
+    /* Simplificar: solo lo esencial */
+    flex: 1;
     padding: 0.5rem;
     background-color: #f3f4f6;
-    /* Agregar border-radius solo en desktop */
     border-bottom-right-radius: 1rem;
     border-bottom-left-radius: 1rem;
     border-bottom: 4px solid #d1d5db;
-    overflow: hidden; /* Evitar scroll en el contenido principal */
+    overflow: hidden;
     display: flex;
     flex-direction: column;
+    height: 100%;
+    min-height: 100%;
   }
 }
 
 @media (min-width: 1280px) {
   .home {
-    /* En desktop XL: maximizar uso del espacio */
-    position: relative;
-    top: auto;
-    /* Usar toda la altura disponible del contenedor padre */
-    height: 100%;
-    min-height: 100%;
-    max-height: 100%;
-    /* Mantener border-radius en desktop XL */
+    flex: 1;
     border-radius: 16px;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 
   .home__content {
-    /* Asegurar altura completa en XL */
-    height: 100%;
-    min-height: 100%;
-    max-height: 100%;
+    flex: 1;
+    display: flex;
     overflow: hidden;
+    height: 100%;
   }
 
   .home__content-main {
-    /* Maximizar altura en XL */
-    height: 100%;
-    min-height: 100%;
-    max-height: 100%;
-    /* Padding mínimo en XL para maximizar espacio */
+    flex: 1;
     padding: 0.75rem;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    height: 100%;
+    min-height: 100%;
   }
 }
 
@@ -296,6 +263,46 @@
    OPTIMIZACIÓN DE LISTAS PARA DESKTOP
    =========================================== */
 
+/* Optimizaciones adicionales para mobile */
+@media (max-width: 640px) {
+  /* Asegurar que no hay espacio desperdiciado */
+  body,
+  html {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  /* Optimizar altura del navbar dentro de listas */
+  .navbar {
+    min-height: 2.5rem; /* Más compacto */
+  }
+
+  /* Reducir espacio entre elementos en mobile */
+  .home__content-main {
+    padding: 0.25rem !important;
+  }
+
+  /* Optimizar contenedor de listas para mobile */
+  .lists-container {
+    gap: 0.25rem !important;
+    padding: 0.25rem !important;
+  }
+
+  /* Optimizar altura de header en listas */
+  .list-container h3 {
+    font-size: 0.875rem;
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+  }
+
+  /* Badge de contador más pequeño */
+  .list-container span {
+    font-size: 0.625rem;
+    padding: 0.125rem 0.375rem;
+  }
+}
+
 /* Contenedor de listas - optimizado para desktop */
 @media (min-width: 1024px) {
   .lists-container {
@@ -333,5 +340,25 @@
   .lists-container {
     gap: 1rem;
     padding: 0.75rem;
+  }
+}
+
+/* Pantallas 2XL+ - Maximizar espacio vertical */
+@media (min-width: 1536px) {
+  .home__content {
+    flex: 1;
+    display: flex;
+  }
+
+  .home__content-main {
+    flex: 1;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .lists-container {
+    gap: 1.25rem;
+    padding: 1rem;
   }
 }

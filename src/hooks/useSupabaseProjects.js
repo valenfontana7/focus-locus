@@ -108,12 +108,12 @@ export default function useSupabaseProjects() {
 
       setLoading(true);
       try {
-        const projectsData = await dbService.getProjects(user?.id);
-
-        if (!isMounted) return; // Evitar actualizar si se desmontó
-
         if (isOnline && user) {
           // Modo online con Supabase
+          const projectsData = await dbService.getProjects(user?.id);
+
+          if (!isMounted) return; // Evitar actualizar si se desmontó
+
           const projectNames = projectsData.map((p) => p.name); // Notificar que se está cargando desde Supabase para preservar colores
           window.dispatchEvent(new CustomEvent("supabase-loading-start"));
 
@@ -162,13 +162,18 @@ export default function useSupabaseProjects() {
           // Notificar que terminó la carga desde Supabase
           window.dispatchEvent(new CustomEvent("supabase-loading-end"));
         } else {
-          // Modo offline - usar localStorage directamente
+          // Modo offline - usar localStorage directamente sin llamadas a la base de datos
+          console.log("🔌 Loading data in offline mode from localStorage");
+
           const currentLocalProjects = JSON.parse(
             localStorage.getItem("focusLocusProjects") || "[]"
           );
           const currentLocalTasks = JSON.parse(
             localStorage.getItem("focusLocusProjectTasks") || "{}"
           );
+
+          console.log("📦 Local projects loaded:", currentLocalProjects);
+          console.log("📦 Local tasks loaded:", currentLocalTasks);
 
           setProjects(currentLocalProjects);
           setProjectTasks(currentLocalTasks);
@@ -213,10 +218,9 @@ export default function useSupabaseProjects() {
   const loadProjects = async () => {
     setLoading(true);
     try {
-      const projectsData = await dbService.getProjects(user?.id);
-
       if (isOnline && user) {
         // Modo online con Supabase
+        const projectsData = await dbService.getProjects(user?.id);
         setProjects(projectsData.map((p) => p.name));
 
         // Cargar tareas para cada proyecto
@@ -252,16 +256,32 @@ export default function useSupabaseProjects() {
 
         setSyncStatus("success");
       } else {
-        // Modo offline - usar localStorage
-        setProjects(localProjects);
-        setProjectTasks(localProjectTasks);
+        // Modo offline - usar localStorage directamente sin llamadas a la base de datos
+        console.log("🔌 Loading projects in offline mode from localStorage");
+
+        const currentLocalProjects = JSON.parse(
+          localStorage.getItem("focusLocusProjects") || "[]"
+        );
+        const currentLocalTasks = JSON.parse(
+          localStorage.getItem("focusLocusProjectTasks") || "{}"
+        );
+
+        setProjects(currentLocalProjects);
+        setProjectTasks(currentLocalTasks);
         setSyncStatus("offline");
       }
     } catch (error) {
       console.error("Error cargando proyectos:", error);
       // Fallback a localStorage en caso de error
-      setProjects(localProjects);
-      setProjectTasks(localProjectTasks);
+      const fallbackProjects = JSON.parse(
+        localStorage.getItem("focusLocusProjects") || "[]"
+      );
+      const fallbackTasks = JSON.parse(
+        localStorage.getItem("focusLocusProjectTasks") || "{}"
+      );
+
+      setProjects(fallbackProjects);
+      setProjectTasks(fallbackTasks);
       setSyncStatus("error");
     }
     setLoading(false);
@@ -420,6 +440,18 @@ export default function useSupabaseProjects() {
   // Función para actualizar tareas de un proyecto
   const updateProjectTasks = async (projectName, newTasks) => {
     try {
+      // 🚀 OPTIMISTIC UPDATE: Actualizar estado local INMEDIATAMENTE
+      const newProjectTasks = { ...projectTasks, [projectName]: newTasks };
+      setProjectTasks(newProjectTasks);
+      setLocalProjectTasks(newProjectTasks);
+
+      // Actualizar localStorage inmediatamente para persistencia
+      localStorage.setItem(
+        "focusLocusProjectTasks",
+        JSON.stringify(newProjectTasks)
+      );
+
+      // 🔄 BACKGROUND SYNC: Sincronizar con Supabase en segundo plano
       setSyncStatus("syncing");
 
       // Si estamos online, sincronizar cambios importantes con Supabase
@@ -548,25 +580,17 @@ export default function useSupabaseProjects() {
           }
         } catch (error) {
           console.error("Error sincronizando tareas con Supabase:", error);
-          // Continuar con actualización local aunque falle Supabase
+          // Continuar aunque falle Supabase - el usuario ya vio el cambio optimista
         }
       }
-
-      // Actualizar estado local
-      const newProjectTasks = { ...projectTasks, [projectName]: newTasks };
-      setProjectTasks(newProjectTasks);
-      setLocalProjectTasks(newProjectTasks);
-
-      // Sincronizar también con localStorage directamente
-      localStorage.setItem(
-        "focusLocusProjectTasks",
-        JSON.stringify(newProjectTasks)
-      );
 
       setSyncStatus("success");
     } catch (error) {
       console.error("Error actualizando tareas:", error);
       setSyncStatus("error");
+
+      // 🔁 ROLLBACK: En caso de error crítico, podrían revertirse los cambios
+      // Por ahora mantenemos el optimistic update incluso en errores para mejor UX
     }
   };
 

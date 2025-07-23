@@ -31,23 +31,23 @@ function Navbar({ search, setSearch, onMenuClick, showMenuButton = true }) {
   };
 
   return (
-    <nav className="navbar w-full h-12 sm:h-14 md:h-16 lg:h-18 lg:rounded-tl-2xl lg:rounded-tr-2xl flex items-center justify-between p-1.5 sm:p-2 md:p-3 lg:p-4 xl:p-6 relative z-10">
-      <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 flex-1 min-w-0">
+    <nav className="navbar w-full h-10 sm:h-12 md:h-14 lg:h-16 lg:rounded-tl-2xl lg:rounded-tr-2xl hidden sm:flex items-center justify-between p-1 sm:p-1.5 md:p-2 lg:p-3 xl:p-4 relative z-10">
+      <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 lg:gap-3 flex-1 min-w-0">
         {/* Botón de menú para móviles */}
         {showMenuButton && (
           <Button
             variant="secondary"
             onClick={onMenuClick}
-            className="lg:hidden p-0.5 sm:p-1.5 md:p-2 flex-shrink-0 min-w-0 min-h-0 w-8 h-8 sm:w-auto sm:h-auto flex items-center justify-center"
+            className="lg:hidden p-0.5 sm:p-1 md:p-1.5 flex-shrink-0 min-w-0 min-h-0 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center"
             title="Menú"
           >
-            <MenuIcon className="text-base sm:text-lg" />
+            <MenuIcon className="text-sm sm:text-base" />
           </Button>
         )}
         <SearchBar search={search} setSearch={setSearch} />
       </div>
       {/* Botones de control */}
-      <div className="flex gap-1 sm:gap-1.5 md:gap-2 lg:gap-3 xl:gap-4 justify-end flex-shrink-0 ml-2 sm:ml-3 md:ml-4 lg:ml-6">
+      <div className="flex gap-0.5 sm:gap-1 md:gap-1.5 lg:gap-2 xl:gap-3 justify-end flex-shrink-0 ml-1 sm:ml-2 md:ml-3 lg:ml-4">
         <Button
           onClick={handleAddTask}
           disabled={projects.length === 0}

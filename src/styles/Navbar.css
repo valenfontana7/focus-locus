@@ -3,9 +3,7 @@
   /* Sombra más prominente para el navbar */
   box-shadow: 0 6px 10px -2px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.05);
-  margin-bottom: 0.1rem;
   /* Separación mínima del header fijo */
-  margin-top: 0.25rem;
   /* Sin border-radius por defecto (mobile) */
   border-radius: 0;
 }
@@ -17,7 +15,13 @@
     /* Sin border-radius en mobile */
     border-radius: 0;
     /* Menos separación en mobile */
-    margin-top: 0.25rem;
+  }
+}
+
+/* Ocultar navbar en mobile para maximizar espacio vertical */
+@media (max-width: 639px) {
+  .navbar {
+    display: none !important;
   }
 }
 
@@ -25,6 +29,5 @@
 @media (min-width: 1024px) {
   .navbar {
     border-radius: 12px 12px 0px 0px;
-    margin-top: 0.25rem; /* Reducir separación en desktop también */
   }
 }

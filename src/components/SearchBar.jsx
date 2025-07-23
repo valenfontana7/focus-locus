@@ -57,13 +57,13 @@ function SearchBar({ search, setSearch }) {
 
   return (
     <div className="search-bar relative flex-1 min-w-0">
-      <SearchIcon className="absolute left-1.5 sm:left-2 md:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10" />
+      <SearchIcon className="absolute left-1.5 sm:left-2 md:left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 z-10 text-sm sm:text-base" />
       <input
         type="text"
         placeholder="Buscar proyectos..."
         value={search}
         onChange={handleSearchChange}
-        className="w-full min-w-[120px] sm:min-w-[140px] md:min-w-[160px] lg:min-w-[200px] pl-8 sm:pl-10 md:pl-12 lg:pl-14 pr-2 sm:pr-3 md:pr-4 py-1.5 sm:py-2 md:py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-xs sm:text-sm md:text-base"
+        className="w-full min-w-[100px] sm:min-w-[120px] md:min-w-[140px] lg:min-w-[160px] pl-7 sm:pl-8 md:pl-10 lg:pl-12 pr-2 sm:pr-3 md:pr-4 py-1 sm:py-1.5 md:py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-xs sm:text-sm md:text-base"
       />
     </div>
   );

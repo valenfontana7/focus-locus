@@ -179,7 +179,7 @@ function Home() {
   const activeTask = getActiveTask();
 
   return (
-    <AppLayout>
+    <AppLayout onMenuClick={toggleSidebar}>
       <DndContext
         collisionDetection={closestCenter}
         onDragStart={handleDragStart}
@@ -192,7 +192,7 @@ function Home() {
         }}
       >
         <div
-          className={`home bg-white rounded-2xl flex flex-col overflow-hidden h-full flex-1 transition-opacity duration-200 ${
+          className={`home bg-white rounded-2xl overflow-hidden transition-opacity duration-200 ${
             !loading && projects.length === 0
               ? "justify-center no-projects"
               : ""
@@ -207,7 +207,7 @@ function Home() {
             />
           )}
           <div
-            className={`home__content flex flex-col lg:flex-row flex-1 min-h-0 overflow-hidden h-full ${
+            className={`home__content ${
               !loading && projects.length === 0 ? "min-h-full" : ""
             }`}
           >
@@ -226,7 +226,7 @@ function Home() {
 
             <div
               ref={contentMainRef}
-              className={`home__content-main w-full bg-gray-100 lg:rounded-br-2xl flex flex-col flex-1 min-h-0 overflow-hidden h-full mb-0 border-b-0 ${
+              className={`home__content-main w-full bg-gray-100 lg:rounded-br-2xl mb-0 border-b-0 ${
                 !loading && projects.length === 0
                   ? "lg:rounded-tl-2xl lg:rounded-tr-2xl lg:rounded-bl-2xl p-0 shadow-none no-projects min-h-full"
                   : "lg:p-1 xl:p-2 lg:border-b-4 lg:border-gray-300"
@@ -283,7 +283,7 @@ function Home() {
               ) : (
                 // Contenido normal cuando hay proyectos
                 <>
-                  <div className="home__content-main-header flex-shrink-0 mb-1 sm:mb-2 md:mb-2 lg:mb-2 xl:mb-3 mt-1 sm:mt-2 md:mt-2 lg:mt-2 xl:mt-3 px-3 lg:px-0">
+                  <div className="home__content-main-header flex-shrink-0 mb-1 sm:mb-2 md:mb-2 lg:mb-2 xl:mb-3 mt-4 sm:mt-2 md:mt-2 lg:mt-2 xl:mt-0 px-3 lg:px-0">
                     {editingProject ? (
                       <input
                         id="project-name-input"
@@ -322,9 +322,7 @@ function Home() {
 
                         {/* Nombre del proyecto - centrado en mobile, alineado a la izquierda en desktop */}
                         <span
-                          className={`text-xl sm:text-2xl md:text-2xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold cursor-pointer px-2 py-2 rounded hover:bg-gray-200 transition-colors flex items-center justify-center lg:justify-start ${
-                            projects.length > 1 ? "lg:flex-1" : "flex-1"
-                          } text-center lg:text-left min-h-[2.5rem]`}
+                          className={`text-xl sm:text-2xl md:text-2xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold cursor-pointer px-2 py-2 rounded hover:bg-gray-200 transition-colors flex items-center justify-center lg:justify-start text-center lg:text-left min-h-[2.5rem] w-auto`}
                           tabIndex={0}
                           onClick={handleProjectNameEdit}
                           onKeyDown={(e) => {

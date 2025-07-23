@@ -75,9 +75,9 @@ function Sidebar({ search, onClose }) {
   return (
     <div
       ref={sidebarRef}
-      className="sidebar bg-white w-80 xl:w-76 pt-8 pl-6 pr-6 pb-6 rounded-bl-2xl flex flex-col min-h-0 lg:static fixed top-0 left-0 z-50 lg:z-auto"
+      className="sidebar bg-white w-80 xl:w-76 pt-6 pl-6 pr-6 pb-6 rounded-bl-2xl flex flex-col min-h-0 lg:static fixed top-0 left-0 z-50 lg:z-auto"
     >
-      <div className="flex-1 overflow-y-auto min-h-0 px-2 pt-4 pb-20 sm:pb-8 md:pb-4 flex flex-col">
+      <div className="flex-1 overflow-y-auto min-h-0 px-2 pt-0 pb-20 sm:pb-8 md:pb-4 flex flex-col">
         {/* Botón de cerrar para móviles */}
         <button
           onClick={onClose}

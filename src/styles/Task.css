@@ -1,0 +1,110 @@
+/* Estilos específicos para el componente Task */
+
+/* Line clamp para la descripción */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Efectos de hover mejorados para las tareas */
+.task-container {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.task-container:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Animación para el icono de drag */
+.drag-handle {
+  transition: all 0.2s ease;
+}
+
+.drag-handle:hover {
+  transform: scale(1.1);
+}
+
+/* Mejores estilos para las prioridades */
+.priority-indicator {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Estilo para el contenedor de fecha */
+.date-container {
+  backdrop-filter: blur(10px);
+  background: rgba(249, 250, 251, 0.8);
+}
+
+/* Hover states para los botones del menú */
+.menu-button:hover {
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.menu-button.danger:hover {
+  background: rgba(239, 68, 68, 0.05);
+}
+
+/* Animación para el menú desplegable */
+.dropdown-menu {
+  animation: slideIn 0.15s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mejoras para mobile */
+@media (max-width: 640px) {
+  .task-container {
+    padding: 1rem;
+  }
+
+  .task-title {
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  .task-description {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .priority-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+/* Estados de arrastre */
+.task-dragging {
+  opacity: 0.5;
+  transform: rotate(5deg);
+  z-index: 1000;
+}
+
+.task-drop-zone {
+  border: 2px dashed #3b82f6;
+  background: rgba(59, 130, 246, 0.05);
+}

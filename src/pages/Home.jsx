@@ -6,6 +6,8 @@ import Modal from "../components/Modal.jsx";
 import { useProjectContext } from "../context/ProjectContext";
 import { useState, useEffect, useRef } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { DndContext, DragOverlay, closestCenter } from "@dnd-kit/core";
 import {
   TouchSensor,
@@ -69,6 +71,20 @@ function Home() {
     }
 
     setEditingProject(false);
+  };
+
+  // Funciones para navegación de proyectos en mobile
+  const navigateToNextProject = () => {
+    const currentIndex = projects.indexOf(activeProject);
+    const nextIndex = (currentIndex + 1) % projects.length;
+    setActiveProject(projects[nextIndex]);
+  };
+
+  const navigateToPrevProject = () => {
+    const currentIndex = projects.indexOf(activeProject);
+    const prevIndex =
+      currentIndex === 0 ? projects.length - 1 : currentIndex - 1;
+    setActiveProject(projects[prevIndex]);
   };
 
   // Configurar sensors para drag and drop
@@ -210,10 +226,10 @@ function Home() {
 
             <div
               ref={contentMainRef}
-              className={`home__content-main w-full bg-gray-100 rounded-br-2xl flex flex-col flex-1 min-h-0 overflow-hidden h-full ${
+              className={`home__content-main w-full bg-gray-100 lg:rounded-br-2xl flex flex-col flex-1 min-h-0 overflow-hidden h-full mb-0 border-b-0 ${
                 !loading && projects.length === 0
-                  ? "rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl p-0 shadow-none no-projects min-h-full"
-                  : "px-2 sm:px-1 md:px-2 lg:px-2 xl:px-3 py-2 sm:py-1 md:py-2 lg:py-2 xl:py-3 border-b-4 border-gray-300"
+                  ? "lg:rounded-tl-2xl lg:rounded-tr-2xl lg:rounded-bl-2xl p-0 shadow-none no-projects min-h-full"
+                  : "lg:p-1 xl:p-2 lg:border-b-4 lg:border-gray-300"
               }`}
             >
               {loading ? (
@@ -267,7 +283,7 @@ function Home() {
               ) : (
                 // Contenido normal cuando hay proyectos
                 <>
-                  <div className="home__content-main-header flex-shrink-0 mb-3 sm:mb-4 md:mb-4 lg:mb-4 xl:mb-5 mt-6 sm:mt-3 md:mt-4 lg:mt-4 xl:mt-5">
+                  <div className="home__content-main-header flex-shrink-0 mb-1 sm:mb-2 md:mb-2 lg:mb-2 xl:mb-3 mt-1 sm:mt-2 md:mt-2 lg:mt-2 xl:mt-3 px-3 lg:px-0">
                     {editingProject ? (
                       <input
                         id="project-name-input"
@@ -288,22 +304,57 @@ function Home() {
                         aria-label="Editar nombre del proyecto"
                       />
                     ) : (
-                      <span
-                        className="text-xl sm:text-2xl md:text-2xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold cursor-pointer px-2 py-1 rounded hover:bg-gray-200 transition-colors"
-                        tabIndex={0}
-                        onClick={handleProjectNameEdit}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ")
-                            handleProjectNameEdit();
-                        }}
-                        title="Editar nombre del proyecto"
-                        aria-label="Editar nombre del proyecto"
-                      >
-                        📌 {activeProject}
-                      </span>
+                      <div className="flex items-center justify-between lg:justify-start w-full">
+                        {/* Botón anterior - solo visible en mobile si hay múltiples proyectos */}
+                        {projects.length > 1 && (
+                          <button
+                            onClick={navigateToPrevProject}
+                            className="lg:hidden flex items-center justify-center p-2 rounded-full hover:bg-gray-200 transition-colors flex-shrink-0"
+                            title="Proyecto anterior"
+                            aria-label="Proyecto anterior"
+                          >
+                            <ChevronLeftIcon
+                              className="text-gray-600"
+                              fontSize="medium"
+                            />
+                          </button>
+                        )}
+
+                        {/* Nombre del proyecto - centrado en mobile, alineado a la izquierda en desktop */}
+                        <span
+                          className={`text-xl sm:text-2xl md:text-2xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold cursor-pointer px-2 py-2 rounded hover:bg-gray-200 transition-colors flex items-center justify-center lg:justify-start ${
+                            projects.length > 1 ? "lg:flex-1" : "flex-1"
+                          } text-center lg:text-left min-h-[2.5rem]`}
+                          tabIndex={0}
+                          onClick={handleProjectNameEdit}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ")
+                              handleProjectNameEdit();
+                          }}
+                          title="Editar nombre del proyecto"
+                          aria-label="Editar nombre del proyecto"
+                        >
+                          📌 {activeProject}
+                        </span>
+
+                        {/* Botón siguiente - solo visible en mobile si hay múltiples proyectos */}
+                        {projects.length > 1 && (
+                          <button
+                            onClick={navigateToNextProject}
+                            className="lg:hidden flex items-center justify-center p-2 rounded-full hover:bg-gray-200 transition-colors flex-shrink-0"
+                            title="Siguiente proyecto"
+                            aria-label="Siguiente proyecto"
+                          >
+                            <ChevronRightIcon
+                              className="text-gray-600"
+                              fontSize="medium"
+                            />
+                          </button>
+                        )}
+                      </div>
                     )}
                   </div>
-                  <div className="flex-1 min-h-0 overflow-hidden h-full">
+                  <div className="flex-1 min-h-0 overflow-hidden h-full lg:px-0">
                     <Lists />
                   </div>
                 </>

@@ -31,7 +31,7 @@ function Navbar({ search, setSearch, onMenuClick, showMenuButton = true }) {
   };
 
   return (
-    <nav className="navbar w-full h-12 sm:h-14 md:h-16 lg:h-18 rounded-tl-2xl rounded-tr-2xl flex items-center justify-between p-1.5 sm:p-2 md:p-3 lg:p-4 xl:p-6 relative z-10">
+    <nav className="navbar w-full h-12 sm:h-14 md:h-16 lg:h-18 lg:rounded-tl-2xl lg:rounded-tr-2xl flex items-center justify-between p-1.5 sm:p-2 md:p-3 lg:p-4 xl:p-6 relative z-10">
       <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 flex-1 min-w-0">
         {/* Botón de menú para móviles */}
         {showMenuButton && (

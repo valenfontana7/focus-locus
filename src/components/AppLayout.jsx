@@ -13,9 +13,10 @@ function AppLayout({ children }) {
   return (
     <div className="app-layout">
       <header className="header w-full flex items-center justify-between px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-2 sm:py-3 md:py-4 lg:py-6 flex-shrink-0">
-        <h1 className="text-xl sm:text-xl md:text-2xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold text-center">
+        <h1 className="text-xl sm:text-xl md:text-2xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold">
           FocusLocus
         </h1>
+
         <nav className="flex items-center justify-center">
           <Button
             variant="secondary"

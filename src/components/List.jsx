@@ -126,7 +126,7 @@ function List({ title, items, showExpira, onRename, onDelete }) {
                 : undefined
               : undefined,
         }}
-        className="list-container bg-white rounded-lg shadow p-2 sm:p-2 md:p-2 lg:p-3 xl:p-3 flex flex-col h-full mx-1 sm:mx-2 md:mx-2 lg:mx-2 xl:mx-2 flex-1 ios-safe-margin"
+        className="list-container bg-white lg:rounded-lg shadow p-2 sm:p-2 md:p-2 lg:p-3 xl:p-3 flex flex-col h-full max-h-full lg:mx-2 xl:mx-2 flex-1 ios-safe-margin overflow-hidden"
       >
         <div className="flex items-center gap-2 mb-2">
           <h3 className="text-base sm:text-lg font-bold flex-1">{title}</h3>
@@ -134,7 +134,7 @@ function List({ title, items, showExpira, onRename, onDelete }) {
             {items.length}
           </span>
         </div>
-        <ul className="list__container space-y-1 sm:space-y-2 md:space-y-3 lg:space-y-4 xl:space-y-5 flex-1 min-h-0 overflow-y-auto h-full">
+        <ul className="list__container space-y-1 sm:space-y-2 md:space-y-3 lg:space-y-4 xl:space-y-5 flex-1 min-h-0 overflow-y-auto max-h-full">
           {items.map((tarea, idx) => (
             <li key={tarea.id} ref={idx === 0 ? firstTaskRef : null}>
               <Task

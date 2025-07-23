@@ -229,7 +229,7 @@ function Lists() {
   return (
     <div
       ref={setNodeRef}
-      className="lists-container flex flex-col sm:flex-row gap-1 sm:gap-0.5 md:gap-0.5 lg:gap-0.5 xl:gap-0.5 p-2 sm:p-2 md:p-3 lg:p-2 xl:p-1 h-full min-h-0"
+      className="lists-container flex flex-col sm:flex-row gap-1 sm:gap-0.5 md:gap-0.5 lg:gap-0.5 xl:gap-0.5 p-2 sm:p-2 md:p-3 lg:p-2 xl:p-1 h-full max-h-full min-h-0 overflow-hidden"
     >
       <List
         title="Pendientes"

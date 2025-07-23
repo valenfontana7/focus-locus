@@ -5,6 +5,7 @@ import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { formatearFechaPersonalizada } from "../utils/dateUtils";
 import { createPortal } from "react-dom";
 import Button from "./Button";
+import "../styles/Task.css";
 
 /**
  * Componente para renderizar una tarea individual.
@@ -103,15 +104,17 @@ function Task({
     <div
       ref={setCombinedRef}
       style={style}
-      className="flex items-center justify-between group relative shadow-sm p-3 sm:p-4 md:p-4 lg:p-4 xl:p-5"
+      className={`task-container flex items-start justify-between group relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-4 sm:p-4 md:p-5 lg:p-5 xl:p-6 border border-gray-100 hover:border-gray-200 ${
+        isDragging ? "task-dragging" : ""
+      } ${isOver ? "task-drop-zone" : ""}`}
     >
       <div className="w-full">
         {/* Fila superior */}
-        <div className="flex items-center w-full gap-2">
-          {/* Icono de drag */}
+        <div className="flex items-start w-full gap-3">
+          {/* Icono de drag con mejor diseño */}
           <span
             ref={setCombinedRef}
-            className="cursor-move text-gray-400 hover:text-gray-600 flex-shrink-0 mr-1"
+            className="drag-handle cursor-move text-gray-300 hover:text-gray-500 flex-shrink-0 transition-colors duration-200"
             style={{ touchAction: "none" }}
             title="Arrastrar tarea"
             tabIndex={-1}
@@ -119,62 +122,84 @@ function Task({
             {...(isOverlay ? {} : attributes)}
             {...(isOverlay ? {} : listeners)}
           >
-            <DragIndicatorIcon className="text-2xl sm:text-xl" />
+            <DragIndicatorIcon className="text-xl sm:text-lg opacity-60 hover:opacity-100 transition-opacity" />
           </span>
-          {/* Prioridad */}
-          {prioridad && prioridad !== "normal" && (
-            <span
-              className={`px-2 py-1 rounded-full text-xs font-semibold mr-1 ${
-                prioridad === "alta"
-                  ? "bg-red-100 text-red-700"
-                  : prioridad === "media"
-                  ? "bg-yellow-100 text-yellow-700"
-                  : "bg-green-100 text-green-700"
-              }`}
-            >
-              {prioridad.charAt(0).toUpperCase() + prioridad.slice(1)}
-            </span>
-          )}
-          {/* Nombre de la tarea */}
-          <span className="font-semibold text-base sm:text-sm flex-1 break-words">
-            {nombre}
-          </span>
-        </div>
-        {/* Fila inferior: descripción y fecha de expiración */}
-        {(descripcion || expira) && (
-          <div className="flex flex-col mt-1 gap-1">
+
+          <div className="flex-1 min-w-0">
+            {/* Encabezado con prioridad y nombre */}
+            <div className="flex items-center gap-2 mb-2">
+              {/* Prioridad con mejor diseño */}
+              {prioridad && prioridad !== "normal" && (
+                <div className="flex items-center gap-1.5">
+                  <div
+                    className={`priority-indicator w-2 h-2 rounded-full ${
+                      prioridad === "alta"
+                        ? "bg-red-400"
+                        : prioridad === "media"
+                        ? "bg-yellow-400"
+                        : "bg-green-400"
+                    }`}
+                  />
+                  <span
+                    className={`priority-badge px-2.5 py-1 rounded-full text-xs font-medium ${
+                      prioridad === "alta"
+                        ? "bg-red-50 text-red-700 ring-1 ring-red-200"
+                        : prioridad === "media"
+                        ? "bg-yellow-50 text-yellow-700 ring-1 ring-yellow-200"
+                        : "bg-green-50 text-green-700 ring-1 ring-green-200"
+                    }`}
+                  >
+                    {prioridad === "alta"
+                      ? "🔥 Alta"
+                      : prioridad === "media"
+                      ? "⚡ Media"
+                      : "🌱 Baja"}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Nombre de la tarea con mejor tipografía */}
+            <h3 className="task-title font-semibold text-gray-900 text-base sm:text-base md:text-lg leading-tight mb-2 break-words">
+              {nombre}
+            </h3>
+
+            {/* Descripción con mejor formato */}
             {descripcion && (
-              <span className="text-xs sm:text-sm text-gray-600 leading-tight line-clamp-2">
+              <p className="task-description text-sm text-gray-600 leading-relaxed line-clamp-2 mb-3">
                 {descripcion}
-              </span>
+              </p>
             )}
+
+            {/* Fecha de expiración con mejor diseño */}
             {expira && (
-              <div className="text-xs text-gray-500 flex items-center gap-1">
-                <span role="img" aria-label="calendario">
-                  📅
+              <div className="date-container inline-flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg text-xs text-gray-600 border">
+                <span className="text-blue-500">📅</span>
+                <span className="font-medium">
+                  {formatearFechaPersonalizada(expira)}
                 </span>
-                {formatearFechaPersonalizada(expira)}
               </div>
             )}
           </div>
-        )}
+        </div>
       </div>
       {!isOverlay && (
-        <div
-          className="ml-0.5 sm:ml-1 md:ml-1 lg:ml-2 xl:ml-2 relative flex items-center"
-          ref={dropdownRef}
-        >
+        <div className="flex items-start" ref={dropdownRef}>
           <button
-            className="flex items-center justify-center p-0.5 sm:p-1 md:p-1 lg:p-2 xl:p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+            className="flex items-center justify-center p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition-all duration-200 opacity-100 lg:opacity-0 lg:group-hover:opacity-100"
             onClick={open ? () => setOpen(false) : handleMenuOpen}
+            title="Opciones de tarea"
           >
-            <MoreVertIcon fontSize="small" />
+            <MoreVertIcon
+              className="text-gray-400 hover:text-gray-600"
+              fontSize="small"
+            />
           </button>
           {open &&
             createPortal(
               <div
                 ref={menuRef}
-                className={`fixed z-[99999] bg-white rounded-lg shadow-lg py-2 border border-gray-200`}
+                className={`dropdown-menu fixed z-[99999] bg-white rounded-xl shadow-xl py-2 border border-gray-200 backdrop-blur-sm`}
                 style={{
                   minWidth: menuWidth,
                   top: menuPosition.top,
@@ -183,7 +208,7 @@ function Task({
               >
                 <Button
                   variant="secondary"
-                  className="block w-full text-left px-5 py-3 text-lg rounded-t-lg"
+                  className="menu-button block w-full text-left px-4 py-3 text-sm font-medium rounded-t-xl hover:bg-gray-50 transition-colors duration-150"
                   onClick={() => {
                     setOpen(false);
                     setTimeout(() => {
@@ -201,11 +226,14 @@ function Task({
                     }, 0);
                   }}
                 >
-                  ✏️ Editar
+                  <span className="flex items-center gap-3">
+                    <span className="text-blue-500">✏️</span>
+                    <span>Editar tarea</span>
+                  </span>
                 </Button>
                 <Button
                   variant="danger"
-                  className="block w-full text-left px-5 py-3 text-lg rounded-b-lg"
+                  className="menu-button danger block w-full text-left px-4 py-3 text-sm font-medium rounded-b-xl hover:bg-red-50 transition-colors duration-150"
                   onClick={() => {
                     setOpen(false);
                     setTimeout(() => {
@@ -223,7 +251,10 @@ function Task({
                     }, 0);
                   }}
                 >
-                  🗑️ Eliminar
+                  <span className="flex items-center gap-3">
+                    <span className="text-red-500">🗑️</span>
+                    <span>Eliminar tarea</span>
+                  </span>
                 </Button>
               </div>,
               document.body

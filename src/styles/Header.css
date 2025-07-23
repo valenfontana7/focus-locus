@@ -2,13 +2,20 @@
   height: 4rem;
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 10; /* Normal en desktop, por debajo del overlay en mobile */
+  z-index: 1000; /* Por encima del contenido normal */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* Alineación vertical de los elementos hijos */
+  display: flex;
+  align-items: center;
 }
 
 /* En mobile, cuando el sidebar está abierto, el header debe estar por debajo del overlay */
 @media (max-width: 1023px) {
   .header {
-    z-index: 0;
+    z-index: 999; /* Por debajo del overlay del sidebar */
   }
 }
 

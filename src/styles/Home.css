@@ -36,7 +36,7 @@
   /* Estilo visual - Sombra más prominente */
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.05);
-  border-radius: 16px;
+  /* Sin border-radius en mobile para que llegue hasta los bordes */
 }
 
 /* 
@@ -52,6 +52,12 @@
   overflow: hidden; /* Evitar scroll accidental */
   position: relative; /* Crear contexto de apilamiento */
   z-index: 1; /* Por encima del .home pero por debajo del sidebar */
+
+  /* Asegurar que llegue hasta los bordes en mobile */
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
 }
 
 /*
@@ -64,12 +70,18 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  border-bottom-left-radius: 1rem;
-  border-bottom-right-radius: 1rem;
+  /* Sin border-radius en mobile para que llegue hasta los bordes */
   overflow-y: auto; /* Permitir scroll interno si es necesario */
 
-  /* Padding móvil mínimo */
-  padding: 0.5rem;
+  /* Sin padding en mobile para que el fondo llegue completamente a los bordes */
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+
+  /* Eliminar explícitamente margin-bottom y border-bottom en mobile */
+  margin-bottom: 0 !important;
+  border-bottom: none !important;
 }
 
 /* ===========================================
@@ -99,38 +111,83 @@
 
 @media (min-width: 1024px) {
   .home {
-    /* En desktop: posición relativa y altura automática */
+    /* En desktop: mantener uso completo del espacio disponible */
     position: relative;
     top: auto;
     left: auto;
     right: auto;
     bottom: auto;
-    height: auto;
+    /* Usar toda la altura disponible en desktop - sin restricciones */
+    height: 100%;
+    min-height: 100%; /* Usar toda la altura del contenedor padre */
+    max-height: 100%; /* Evitar overflow */
     width: calc(100% - 1rem);
     margin: 0.5rem;
+    /* Agregar border-radius solo en desktop */
+    border-radius: 16px;
+    overflow: hidden; /* Evitar scroll en el contenedor principal */
   }
 
   .home__content {
     /* Layout horizontal: sidebar | main */
     flex-direction: row;
+    /* Asegurar que use toda la altura disponible */
+    height: 100%;
+    min-height: 100%;
+    max-height: 100%;
+    overflow: hidden;
   }
 
   .home__content-main {
-    /* Padding mayor en desktop */
-    padding: 1.5rem;
+    /* Usar toda la altura disponible */
+    height: 100%;
+    min-height: 100%;
+    max-height: 100%;
+    /* Padding mínimo en desktop para maximizar espacio */
+    padding: 0.5rem;
     background-color: #f3f4f6;
+    /* Agregar border-radius solo en desktop */
     border-bottom-right-radius: 1rem;
     border-bottom-left-radius: 1rem;
     border-bottom: 4px solid #d1d5db;
+    overflow: hidden; /* Evitar scroll en el contenido principal */
+    display: flex;
+    flex-direction: column;
   }
 }
 
 @media (min-width: 1280px) {
   .home {
-    /* En desktop XL mantener comportamiento normal */
+    /* En desktop XL: maximizar uso del espacio */
     position: relative;
     top: auto;
-    height: auto;
+    /* Usar toda la altura disponible del contenedor padre */
+    height: 100%;
+    min-height: 100%;
+    max-height: 100%;
+    /* Mantener border-radius en desktop XL */
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .home__content {
+    /* Asegurar altura completa en XL */
+    height: 100%;
+    min-height: 100%;
+    max-height: 100%;
+    overflow: hidden;
+  }
+
+  .home__content-main {
+    /* Maximizar altura en XL */
+    height: 100%;
+    min-height: 100%;
+    max-height: 100%;
+    /* Padding mínimo en XL para maximizar espacio */
+    padding: 0.75rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 }
 
@@ -149,7 +206,14 @@
   border-bottom: none;
   background-color: transparent;
   padding: 1rem;
-  border-radius: 1rem;
+  /* Sin border-radius en mobile */
+}
+
+/* Border-radius solo en desktop para el estado no-projects */
+@media (min-width: 1024px) {
+  .home__content-main.no-projects {
+    border-radius: 1rem;
+  }
 }
 
 /* ===========================================
@@ -194,17 +258,26 @@
    MEJORAS VISUALES - SOMBRAS Y BORDES
    =========================================== */
 
-/* Mejorar sombras de elementos internos */
-.home__content-main {
-  /* Sombra sutil en el área principal */
-  box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+/* Mejorar sombras de elementos internos - solo en desktop */
+@media (min-width: 1024px) {
+  .home__content-main {
+    /* Sombra sutil en el área principal solo en desktop */
+    box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  }
 }
 
 /* Sombras para listas individuales */
 .list {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  border-radius: 8px;
+  /* Sin border-radius en mobile */
   background: white;
+}
+
+/* Border-radius para listas solo en desktop */
+@media (min-width: 1024px) {
+  .list {
+    border-radius: 8px;
+  }
 }
 
 /* Sombras para tareas */
@@ -217,4 +290,48 @@
 .task:hover {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* ===========================================
+   OPTIMIZACIÓN DE LISTAS PARA DESKTOP
+   =========================================== */
+
+/* Contenedor de listas - optimizado para desktop */
+@media (min-width: 1024px) {
+  .lists-container {
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    /* Flex layout optimizado */
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 0.75rem;
+    padding: 0.5rem;
+  }
+
+  /* Contenedor individual de lista */
+  .list-container {
+    height: 100%;
+    max-height: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Lista de tareas - con scroll interno */
+  .list__container {
+    flex: 1;
+    height: auto;
+    max-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+}
+
+@media (min-width: 1280px) {
+  .lists-container {
+    gap: 1rem;
+    padding: 0.75rem;
+  }
 }

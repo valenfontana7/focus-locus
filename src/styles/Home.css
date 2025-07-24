@@ -544,7 +544,7 @@ ul[class*="list__container"] {
   /* REGLA ULTRA-ESPECÍFICA: Solo para navegadores NO iOS Safari en mobile */
   @media (max-width: 640px) {
     body:not(.ios-safari) .lists-container {
-      min-height: 60vh !important; /* Al menos 60% del viewport */
+      min-height: 90vh !important; /* Al menos 90% del viewport */
     }
 
     body:not(.ios-safari) .list-container {
@@ -579,7 +579,7 @@ ul[class*="list__container"] {
   /* Esto debería aplicarse a la mayoría de Android pero no iOS */
   body:not(.ios-safari) .lists-container {
     flex: 1 !important;
-    min-height: 60vh !important; /* Al menos 60% del viewport */
+    min-height: 90vh !important; /* Al menos 60% del viewport */
   }
 
   body:not(.ios-safari) .list-container {

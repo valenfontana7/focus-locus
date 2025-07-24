@@ -754,3 +754,555 @@ ul[class*="list__container"] {
     height: 100% !important;
   }
 }
+
+/* ===========================================
+   CONTROL DE ALTURA - ELEMENTOS SECUNDARIOS
+   =========================================== */
+
+/*
+  📏 SIDEBAR - Barra lateral simplificada
+  - Ocupa toda la altura disponible del contenedor
+  - Sin scroll interno, el scroll es controlado por el contenedor padre
+*/
+.sidebar {
+  /* ALTURA COMPLETA - Sin complicaciones */
+  flex: 0 0 250px; /* Ancho fijo */
+  display: flex;
+  flex-direction: column;
+
+  /* Layout básico */
+  height: 100%;
+  margin: 0;
+  padding: 0;
+
+  /* Evitar interferencias */
+  box-sizing: border-box;
+
+  /* Mejorar rendimiento en iOS */
+  -webkit-overflow-scrolling: touch;
+  transform: translateZ(0);
+}
+
+/* 
+  📑 SIDEBAR CONTENT - Contenido de la barra lateral
+  - Ocupa toda la altura del .sidebar
+  - Sin scroll interno, el scroll es controlado por el contenedor padre
+*/
+.sidebar__content {
+  /* ALTURA COMPLETA - Sin complicaciones */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  /* Layout básico */
+  width: 100%;
+  margin: 0;
+  padding: 0;
+
+  /* Evitar interferencias */
+  box-sizing: border-box;
+
+  /* Mejorar rendimiento en iOS */
+  -webkit-overflow-scrolling: touch;
+  transform: translateZ(0);
+}
+
+/* ===========================================
+   ESTILOS GLOBALES
+   =========================================== */
+
+/* Estilos globales simplificados */
+html,
+body,
+#app {
+  /* Asegurar que ocupan toda la altura del viewport */
+  height: 100%;
+
+  /* Sin scroll en el body */
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* Contenedor principal de la app - Asegurar que ocupa toda la altura disponible */
+#app {
+  display: flex;
+  flex-direction: column;
+  /* Sin border-radius en mobile para que llegue hasta los bordes */
+  border-radius: 0;
+}
+
+/* ===========================================
+   MEJORAS VISUALES - SOMBRAS Y BORDES
+   =========================================== */
+
+/* Mejorar sombras de elementos internos - solo en desktop */
+@media (min-width: 1024px) {
+  .home__content-main {
+    /* Sombra sutil en el área principal solo en desktop */
+    box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Sombras para listas individuales */
+.list {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  /* Sin border-radius en mobile */
+  background: white;
+}
+
+/* Asegurar que todos los contenedores de lista ocupen altura completa - FLEXBOX CONSERVADOR */
+.list-container {
+  flex: 1 !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+/* Regla global para contenedor de listas - FLEXBOX CONSERVADOR */
+.lists-container {
+  flex: 1 !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+/* Border-radius para listas solo en desktop */
+@media (min-width: 1024px) {
+  .list {
+    border-radius: 8px;
+  }
+}
+
+/* Sombras para tareas */
+.task {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  transition: box-shadow 0.15s ease-in-out;
+}
+
+.task:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* ===========================================
+   OPTIMIZACIÓN DE LISTAS PARA DESKTOP
+   =========================================== */
+
+/* Optimizaciones adicionales para mobile - MAXIMIZAR ALTURA DE LISTAS */
+@media (max-width: 640px) {
+  /* Asegurar que no hay espacio desperdiciado */
+  body,
+  html {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  /* FORZAR ALTURA COMPLETA para .home - Llegar hasta el final de app-main-content */
+  .home {
+    height: 100% !important;
+    min-height: 100% !important;
+  }
+
+  /* FORZAR ALTURA COMPLETA para .home__content - Llegar hasta el final de .home */
+  .home__content {
+    height: 100% !important;
+    min-height: 100% !important;
+  }
+
+  /* FORZAR ALTURA COMPLETA para .home__content-main - Llegar hasta el final de .home__content */
+  .home__content-main {
+    height: 100% !important;
+    min-height: 100% !important;
+  }
+
+  /* FORZAR ALTURA COMPLETA para .lists-container - Llegar hasta el final de .home__content-main */
+  .lists-container {
+    height: 100% !important;
+    min-height: 100% !important;
+  }
+
+  /* FORZAR ALTURA COMPLETA - Solo para navegadores NO iOS Safari */
+  body:not(.ios-safari) .home {
+    min-height: calc(
+      var(--vh, 1vh) * 100
+    ) !important; /* Usar variable CSS del viewport fix */
+    height: calc(var(--vh, 1vh) * 100) !important;
+  }
+
+  body:not(.ios-safari) .home__content {
+    flex: 1 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+  }
+
+  body:not(.ios-safari) .home__content-main {
+    flex: 1 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    background-color: #f3f4f6 !important; /* Asegurar fondo gris */
+  }
+
+  /* Reducir padding del contenido principal en mobile para maximizar altura de listas */
+  .home__content-main {
+    padding: 0.125rem !important; /* Aún más reducido */
+  }
+
+  /* Optimizar contenedor de listas para mobile - SOBRESCRIBIR TAILWIND */
+  .lists-container {
+    gap: 0.0625rem !important; /* Aún más reducido - sobrescribir gap-0.5 */
+    padding: 0.125rem !important; /* Casi sin padding - sobrescribir p-1 */
+    /* Asegurar que las listas usen toda la altura disponible en mobile */
+    flex: 1 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    height: 100% !important; /* Ocupar toda la altura del contenedor padre */
+    min-height: 100% !important;
+  }
+
+  /* Sobrescribir clases específicas de Tailwind en el contenedor de listas */
+  .lists-container.p-1 {
+    padding: 0.125rem !important; /* Sobrescribir p-1 */
+  }
+
+  .lists-container.gap-0\.5 {
+    gap: 0.0625rem !important; /* Sobrescribir gap-0.5 */
+  }
+
+  /* Contenedor individual de lista en mobile - Solo para navegadores NO iOS Safari */
+  body:not(.ios-safari) .list-container {
+    flex: 1 !important;
+    min-height: 200px !important; /* Altura mínima específica */
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    padding: 0.375rem !important; /* Reducir padding interno de las listas */
+  }
+
+  /* Sobrescribir clases específicas de Tailwind para padding reducido - Solo para navegadores NO iOS Safari */
+  body:not(.ios-safari) .list-container.p-2 {
+    padding: 0.375rem !important; /* Sobrescribir p-2 de Tailwind */
+    min-height: 200px !important; /* Altura mínima específica */
+  }
+
+  /* Reducir gap y margin específicos del header */
+  .list-container .flex.items-center.gap-2 {
+    margin-bottom: 0.25rem !important; /* Reducir margen del header */
+    gap: 0.25rem !important; /* Reducir gap en header */
+  }
+
+  .list-container .mb-2 {
+    margin-bottom: 0.25rem !important; /* Sobrescribir mb-2 de Tailwind */
+  }
+
+  /* La lista UL debe ocupar toda la altura disponible - Solo para navegadores NO iOS Safari */
+  body:not(.ios-safari) .list__container {
+    flex: 1 !important;
+    min-height: 150px !important; /* Altura mínima para la lista de tareas */
+    overflow-y: auto !important;
+  }
+
+  /* Sobrescribir específicamente las clases space-y de Tailwind */
+  .list__container.space-y-0\.5 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.0625rem !important; /* Aún más compacto */
+  }
+
+  .list__container.space-y-1 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.0625rem !important; /* Aún más compacto */
+  }
+
+  /* Reducir márgenes de los elementos internos de lista */
+  .list-container .lg\\:mx-2,
+  .list-container .xl\\:mx-2 {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Asegurar que las tareas individuales tengan menos espacio */
+  .list__container li {
+    margin-bottom: 0.0625rem !important;
+  }
+
+  /* REGLA GLOBAL: Forzar altura mínima y padding mínimo en mobile - Solo para navegadores NO iOS Safari */
+  body:not(.ios-safari) .list-container,
+  body:not(.ios-safari) .list-container.p-2,
+  body:not(.ios-safari) .list-container.sm\\:p-2,
+  body:not(.ios-safari) .list-container.md\\:p-2 {
+    padding: 0.25rem !important; /* Forzar padding mínimo */
+    min-height: 200px !important; /* Forzar altura mínima */
+  }
+
+  body:not(.ios-safari) .lists-container,
+  body:not(.ios-safari) .lists-container.p-1,
+  body:not(.ios-safari) .lists-container.sm\\:p-2,
+  body:not(.ios-safari) .lists-container.md\\:p-3 {
+    padding: 0.125rem !important; /* Forzar padding mínimo */
+    gap: 0.0625rem !important; /* Forzar gap mínimo */
+    min-height: 450px !important; /* Altura mínima para el contenedor completo */
+  }
+
+  /* Forzar altura específica en el UL de tareas - Solo para navegadores NO iOS Safari */
+  body:not(.ios-safari) ul.list__container,
+  body:not(.ios-safari) .list__container,
+  body:not(.ios-safari) .list__container.space-y-0\.5,
+  body:not(.ios-safari) .list__container.space-y-1 {
+    min-height: 150px !important; /* Altura mínima específica */
+    flex: 1 !important;
+  }
+
+  /* REGLA ULTRA-ESPECÍFICA: Solo para navegadores NO iOS Safari en mobile */
+  @media (max-width: 640px) {
+    body:not(.ios-safari) .lists-container {
+      min-height: 60vh !important; /* Al menos 60% del viewport */
+    }
+
+    body:not(.ios-safari) .list-container {
+      min-height: 25vh !important; /* Al menos 25% del viewport por lista */
+    }
+
+    body:not(.ios-safari) .list__container {
+      min-height: 20vh !important; /* Al menos 20% del viewport para las tareas */
+    }
+  }
+}
+
+/* Mobile Android/Chrome específico - FLEXBOX CON ALTURAS MÍNIMAS */
+/* Clase que se aplicará vía JavaScript para navegadores no-iOS */
+.non-ios-mobile .home {
+  height: 100% !important; /* Ocupar toda la altura de app-main-content */
+  min-height: 100% !important;
+  height: calc(var(--vh, 1vh) * 100) !important;
+}
+
+.non-ios-mobile .home__content {
+  flex: 1 !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  min-height: 100% !important; /* Asegurar altura completa */
+}
+
+.non-ios-mobile .home__content-main {
+  flex: 1 !important;
+  background-color: #f3f4f6 !important; /* Asegurar fondo gris */
+}
+
+.non-ios-mobile .lists-container {
+  flex: 1 !important;
+  min-height: 450px !important; /* Altura mínima específica */
+  height: 100% !important; /* Ocupar toda la altura disponible */
+  min-height: 100% !important;
+}
+
+.non-ios-mobile .list-container {
+  flex: 1 !important;
+  min-height: 200px !important; /* Altura mínima específica */
+}
+
+.non-ios-mobile .list__container {
+  flex: 1 !important;
+  min-height: 150px !important; /* Altura mínima específica */
+}
+
+/* Fallback: usar viewport width como detector - FLEXBOX CON ALTURAS MÍNIMAS */
+@media (max-width: 640px) and (min-resolution: 1dppx) {
+  /* Esto debería aplicarse a la mayoría de Android pero no iOS */
+  body:not(.ios-safari) .home {
+    height: 100% !important; /* Ocupar toda la altura de app-main-content */
+    min-height: 100% !important;
+    min-height: calc(
+      var(--vh, 1vh) * 100
+    ) !important; /* Usar variable CSS del viewport fix */
+    height: calc(var(--vh, 1vh) * 100) !important;
+  }
+
+  body:not(.ios-safari) .home__content {
+    flex: 1 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    min-height: 100% !important; /* Asegurar altura completa */
+  }
+
+  body:not(.ios-safari) .home__content-main {
+    flex: 1 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    background-color: #f3f4f6 !important; /* Asegurar fondo gris */
+  }
+
+  body:not(.ios-safari) .lists-container {
+    flex: 1 !important;
+    min-height: 60vh !important; /* Al menos 60% del viewport */
+  }
+
+  body:not(.ios-safari) .list-container {
+    flex: 1 !important;
+    min-height: 25vh !important; /* Al menos 25% del viewport por lista */
+  }
+
+  body:not(.ios-safari) .list__container {
+    flex: 1 !important;
+    min-height: 20vh !important; /* Al menos 20% del viewport para las tareas */
+  }
+}
+
+/* Contenedor de listas - optimizado para desktop */
+@media (min-width: 1024px) {
+  .lists-container {
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    /* Flex layout optimizado */
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    height: 100% !important;
+  }
+
+  /* Contenedor individual de lista */
+  .list-container {
+    flex: 1 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    height: 100% !important;
+  }
+
+  /* La lista UL debe ocupar toda la altura disponible */
+  .list__container {
+    flex: 1 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    overflow-y: auto !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .lists-container {
+    gap: 1rem;
+    padding: 0.75rem;
+    flex: 1 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+  }
+}
+
+/* Pantallas 2XL+ - Maximizar espacio vertical */
+@media (min-width: 1536px) {
+  .home__content {
+    flex: 1;
+    display: flex;
+  }
+
+  .home__content-main {
+    flex: 1;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .lists-container {
+    gap: 1.25rem;
+    padding: 1rem;
+    flex: 1 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+  }
+}
+
+/* ===========================================
+   CONTROL DE ALTURA - ELEMENTOS SECUNDARIOS
+   =========================================== */
+
+/*
+  📏 SIDEBAR - Barra lateral simplificada
+  - Ocupa toda la altura disponible del contenedor
+  - Sin scroll interno, el scroll es controlado por el contenedor padre
+*/
+.sidebar {
+  /* ALTURA COMPLETA - Sin complicaciones */
+  flex: 0 0 250px; /* Ancho fijo */
+  display: flex;
+  flex-direction: column;
+
+  /* Layout básico */
+  height: 100%;
+  margin: 0;
+  padding: 0;
+
+  /* Evitar interferencias */
+  box-sizing: border-box;
+
+  /* Mejorar rendimiento en iOS */
+  -webkit-overflow-scrolling: touch;
+  transform: translateZ(0);
+}
+
+/* 
+  📑 SIDEBAR CONTENT - Contenido de la barra lateral
+  - Ocupa toda la altura del .sidebar
+  - Sin scroll interno, el scroll es controlado por el contenedor padre
+*/
+.sidebar__content {
+  /* ALTURA COMPLETA - Sin complicaciones */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  /* Layout básico */
+  width: 100%;
+  margin: 0;
+  padding: 0;
+
+  /* Evitar interferencias */
+  box-sizing: border-box;
+
+  /* Mejorar rendimiento en iOS */
+  -webkit-overflow-scrolling: touch;
+  transform: translateZ(0);
+}
+
+/* ===========================================
+   ESTILOS GLOBALES
+   =========================================== */
+
+/* Estilos globales simplificados */
+html,
+body,
+#app {
+  /* Asegurar que ocupan toda la altura del viewport */
+  height: 100%;
+
+  /* Sin scroll en el body */
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* Contenedor principal de la app - Asegurar que ocupa toda la altura disponible */
+#app {
+  display: flex;
+  flex-direction: column;
+  /* Sin border-radius en mobile para que llegue hasta los bordes */
+  border-radius: 0;
+}
+
+/* ===========================================
+   CONTROL ESPECÍFICO PARA MOBILE
+   =========================================== */
+
+/* Mobile: permitir que el menú del botón flotante sea visible */
+@media (max-width: 1023px) {
+  .home,
+  .home__content,
+  .home__content-main {
+    overflow: visible !important;
+  }
+}

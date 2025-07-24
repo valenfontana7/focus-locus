@@ -523,6 +523,7 @@ export default function useSupabaseProjects() {
                 newTask.nombre !== currentTask.nombre ||
                 newTask.descripcion !== currentTask.descripcion ||
                 newTask.expira !== currentTask.expira ||
+                newTask.fechaHora !== currentTask.fechaHora ||
                 newTask.prioridad !== currentTask.prioridad ||
                 newTask.status !== currentTask.status ||
                 newTask.position !== currentTask.position
@@ -544,6 +545,7 @@ export default function useSupabaseProjects() {
                     nombre: task.nombre,
                     descripcion: task.descripcion || "",
                     expira: task.expira,
+                    fechaHora: task.fechaHora,
                     prioridad: task.prioridad,
                     status: task.status,
                     position: task.position || 0,
@@ -560,6 +562,7 @@ export default function useSupabaseProjects() {
                     nombre: task.nombre,
                     descripcion: task.descripcion || "",
                     expira: task.expira,
+                    fechaHora: task.fechaHora,
                     prioridad: task.prioridad,
                     status: task.status,
                     position: task.position || 0,

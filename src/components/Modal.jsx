@@ -33,22 +33,24 @@ function Modal({ open, onClose, title, children, actions }) {
         if (e.target === overlayRef.current) onClose();
       }}
     >
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b">
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[95vh] flex flex-col">
+        <div className="flex items-center justify-between p-3 sm:p-4 border-b flex-shrink-0">
           {title && (
-            <h2 className="text-lg sm:text-xl font-semibold">{title}</h2>
+            <h2 className="text-base sm:text-lg font-semibold">{title}</h2>
           )}
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-xl sm:text-2xl leading-none ml-auto"
+            className="text-gray-400 hover:text-gray-600 text-xl leading-none ml-auto"
           >
             ×
           </button>
         </div>
-        <div className="p-4 sm:p-6">{children}</div>
-        <div className="flex justify-end gap-2 p-4 sm:p-6 border-t">
-          {actions}
-        </div>
+        <div className="p-3 sm:p-4 overflow-y-auto flex-1">{children}</div>
+        {actions && (
+          <div className="flex justify-end gap-2 p-3 sm:p-4 border-t flex-shrink-0">
+            {actions}
+          </div>
+        )}
       </div>
     </div>
   );

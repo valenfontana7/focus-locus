@@ -8,7 +8,7 @@ import { useState, useEffect, useRef } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { DndContext, DragOverlay, closestCenter } from "@dnd-kit/core";
+import { DndContext, DragOverlay, closestCorners } from "@dnd-kit/core";
 import {
   TouchSensor,
   PointerSensor,
@@ -35,6 +35,7 @@ function Home() {
   const contentMainRef = useRef(null);
   const [editingProject, setEditingProject] = useState(false);
   const [projectNameInput, setProjectNameInput] = useState(activeProject);
+  const [mobileActionsOpen, setMobileActionsOpen] = useState(false);
 
   useEffect(() => {
     setProjectNameInput(activeProject);
@@ -87,17 +88,30 @@ function Home() {
     setActiveProject(projects[prevIndex]);
   };
 
+  // Funciones para acciones móviles (replicando Navbar)
+  const handleMobileAddTask = () => {
+    window.dispatchEvent(
+      new CustomEvent("add-task", {
+        detail: { project: activeProject },
+      })
+    );
+  };
+
+  const toggleMobileActions = () => {
+    setMobileActionsOpen(!mobileActionsOpen);
+  };
+
   // Configurar sensors para drag and drop
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 10,
+        distance: 8, // Reducido para ser más sensible
       },
     }),
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 200,
-        tolerance: 10,
+        delay: 150, // Reducido de 200ms
+        tolerance: 8, // Reducido para ser más sensible
       },
     })
   );
@@ -120,7 +134,7 @@ function Home() {
   const handleDragEnd = (event) => {
     const { active, over } = event;
 
-    if (active && over && active.id !== over.id) {
+    if (active && over) {
       // Disparar evento con toda la información del drag
       window.dispatchEvent(
         new CustomEvent("drag-end", {
@@ -181,7 +195,7 @@ function Home() {
   return (
     <AppLayout onMenuClick={toggleSidebar}>
       <DndContext
-        collisionDetection={closestCenter}
+        collisionDetection={closestCorners}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         sensors={sensors}
@@ -189,6 +203,9 @@ function Home() {
           droppable: {
             strategy: "always",
           },
+        }}
+        autoScroll={{
+          enabled: false, // Deshabilitar auto-scroll para mejor control
         }}
       >
         <div
@@ -206,11 +223,7 @@ function Home() {
               showMenuButton={projects.length > 0}
             />
           )}
-          <div
-            className={`home__content ${
-              !loading && projects.length === 0 ? "min-h-full" : ""
-            }`}
-          >
+          <div className="home__content">
             {/* Sidebar en desktop - dentro del flujo normal, solo si hay proyectos */}
             {projects.length > 0 && (
               <div className="hidden lg:block lg:static lg:w-auto">
@@ -226,9 +239,9 @@ function Home() {
 
             <div
               ref={contentMainRef}
-              className={`home__content-main w-full bg-gray-100 lg:rounded-br-2xl mb-0 border-b-0 ${
+              className={`home__content-main w-full bg-gray-100 lg:rounded-br-2xl ${
                 !loading && projects.length === 0
-                  ? "lg:rounded-tl-2xl lg:rounded-tr-2xl lg:rounded-bl-2xl p-0 shadow-none no-projects min-h-full"
+                  ? "lg:rounded-tl-2xl lg:rounded-tr-2xl lg:rounded-bl-2xl p-0 shadow-none no-projects"
                   : "lg:p-1 xl:p-2 lg:border-b-4 lg:border-gray-300"
               }`}
             >
@@ -283,7 +296,7 @@ function Home() {
               ) : (
                 // Contenido normal cuando hay proyectos
                 <>
-                  <div className="home__content-main-header flex-shrink-0 mb-1 sm:mb-2 md:mb-2 lg:mb-2 xl:mb-3 mt-4 sm:mt-2 md:mt-2 lg:mt-2 xl:mt-0 px-3 lg:px-0">
+                  <div className="home__content-main-header flex-shrink-0 mb-1 mt-1 sm:mb-2 sm:mt-1 md:mb-2 md:mt-1 lg:mb-2 lg:mt-1 xl:mb-3 xl:mt-0 px-3 lg:px-0">
                     {editingProject ? (
                       <input
                         id="project-name-input"
@@ -352,7 +365,7 @@ function Home() {
                       </div>
                     )}
                   </div>
-                  <div className="flex-1 min-h-0 overflow-hidden h-full lg:px-0">
+                  <div className="flex-1 min-h-0 overflow-hidden lg:px-0">
                     <Lists />
                   </div>
                 </>
@@ -395,6 +408,63 @@ function Home() {
             onClick={closeSidebar}
           />
         )}
+
+        {/* Botón flotante para acciones en mobile - solo cuando hay proyectos */}
+        {projects.length > 0 && (
+          <div className="sm:hidden fixed bottom-4 left-4 z-50">
+            {/* Overlay para cerrar menu al tocar fuera */}
+            {mobileActionsOpen && (
+              <div
+                className="fixed inset-0"
+                style={{ zIndex: 99998 }}
+                onClick={() => setMobileActionsOpen(false)}
+              />
+            )}
+
+            {/* Menú de acciones desplegable */}
+            {mobileActionsOpen && (
+              <div
+                className="absolute bottom-16 left-0 bg-white rounded-lg shadow-lg border border-gray-200 w-48 overflow-hidden"
+                style={{ zIndex: 99999 }}
+              >
+                <div
+                  onClick={() => {
+                    handleMobileAddTask();
+                    setMobileActionsOpen(false);
+                  }}
+                  className="w-full px-5 py-4 text-left hover:bg-gray-50 flex items-center gap-3 border-b border-gray-100 cursor-pointer"
+                >
+                  <span className="text-xl">+</span>
+                  <span className="font-medium text-base">Agregar tarea</span>
+                </div>
+                <div
+                  onClick={() => {
+                    window.dispatchEvent(new CustomEvent("clear-tasks"));
+                    setMobileActionsOpen(false);
+                  }}
+                  className="w-full px-5 py-4 text-left hover:bg-gray-50 flex items-center gap-3 text-red-600 cursor-pointer"
+                >
+                  <span className="text-xl">🗑️</span>
+                  <span className="font-medium text-base">Limpiar tareas</span>
+                </div>
+              </div>
+            )}
+
+            {/* Botón principal flotante */}
+            <button
+              onClick={() => {
+                toggleMobileActions();
+              }}
+              className="w-16 h-16 bg-gray-950 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-800 transition-colors"
+              title="Acciones"
+            >
+              <span className="text-2xl font-bold">
+                {mobileActionsOpen ? "✕" : "+"}
+              </span>
+            </button>
+          </div>
+        )}
+
         <DragOverlay dropAnimation={null} zIndex={1}>
           {activeTask ? (
             <Task

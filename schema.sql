@@ -27,8 +27,9 @@ CREATE TABLE IF NOT EXISTS tasks (
   name TEXT NOT NULL,
   description TEXT DEFAULT '',
   status TEXT CHECK (status IN ('pendientes', 'enCurso', 'terminadas')) DEFAULT 'pendientes',
-  priority TEXT CHECK (priority IN ('baja', 'normal', 'alta')) DEFAULT 'normal',
+  priority TEXT CHECK (priority IN ('baja', 'normal', 'media', 'alta')) DEFAULT 'normal',
   due_date DATE,
+  fecha_hora TIMESTAMPTZ, -- Campo para fecha y hora específica
   
   -- Orden para drag & drop
   position INTEGER DEFAULT 0,
@@ -112,6 +113,7 @@ BEGIN
                     'nombre', name,
                     'descripcion', description,
                     'expira', due_date,
+                    'fechaHora', fecha_hora,
                     'prioridad', priority,
                     'position', position
                 ) ORDER BY position, created_at
@@ -124,6 +126,7 @@ BEGIN
                     'nombre', name,
                     'descripcion', description,
                     'expira', due_date,
+                    'fechaHora', fecha_hora,
                     'prioridad', priority,
                     'position', position
                 ) ORDER BY position, created_at
@@ -136,6 +139,7 @@ BEGIN
                     'nombre', name,
                     'descripcion', description,
                     'expira', due_date,
+                    'fechaHora', fecha_hora,
                     'prioridad', priority,
                     'position', position
                 ) ORDER BY position, created_at
@@ -167,3 +171,66 @@ INSERT INTO tasks (project_id, user_id, name, description, status, priority, due
    'baja', 
    CURRENT_DATE + INTERVAL '7 days');
 */
+
+-- MIGRACIÓN: Agregar columna fecha_hora si no existe
+-- ⚠️  IMPORTANTE: Ejecutar este comando en Supabase SQL Editor si ya tienes una base de datos existente
+-- 
+-- Pasos para aplicar la migración:
+-- 1. Ve a tu proyecto de Supabase (https://app.supabase.com)
+-- 2. Ve a la sección "SQL Editor"
+-- 3. Ejecuta el siguiente comando:
+
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS fecha_hora TIMESTAMPTZ;
+
+-- 4. Luego ejecuta este comando para actualizar la función existente:
+
+CREATE OR REPLACE FUNCTION get_project_tasks_grouped(project_uuid UUID)
+RETURNS JSON AS $$
+DECLARE
+    result JSON;
+BEGIN
+    SELECT json_build_object(
+        'pendientes', COALESCE(
+            (SELECT json_agg(
+                json_build_object(
+                    'id', id,
+                    'nombre', name,
+                    'descripcion', description,
+                    'expira', due_date,
+                    'fechaHora', fecha_hora,
+                    'prioridad', priority,
+                    'position', position
+                ) ORDER BY position, created_at
+            ) FROM tasks WHERE project_id = project_uuid AND status = 'pendientes'), '[]'::json
+        ),
+        'enCurso', COALESCE(
+            (SELECT json_agg(
+                json_build_object(
+                    'id', id,
+                    'nombre', name,
+                    'descripcion', description,
+                    'expira', due_date,
+                    'fechaHora', fecha_hora,
+                    'prioridad', priority,
+                    'position', position
+                ) ORDER BY position, created_at
+            ) FROM tasks WHERE project_id = project_uuid AND status = 'enCurso'), '[]'::json
+        ),
+        'terminadas', COALESCE(
+            (SELECT json_agg(
+                json_build_object(
+                    'id', id,
+                    'nombre', name,
+                    'descripcion', description,
+                    'expira', due_date,
+                    'fechaHora', fecha_hora,
+                    'prioridad', priority,
+                    'position', position
+                ) ORDER BY position, created_at
+            ) FROM tasks WHERE project_id = project_uuid AND status = 'terminadas'), '[]'::json
+        )
+    ) INTO result;
+    
+    RETURN result;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

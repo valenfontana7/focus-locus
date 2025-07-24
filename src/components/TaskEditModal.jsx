@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import Modal from "./Modal";
-import DatePicker from "./DatePicker";
+import DateTimePicker from "./DateTimePicker";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import DescriptionIcon from "@mui/icons-material/Description";
-import { formatearFechaPersonalizada } from "../utils/dateUtils";
 import Button from "./Button";
 
 function TaskEditModal({ open, onClose, task, onSave }) {
   const [formData, setFormData] = useState({
     nombre: "",
     expira: "",
+    fechaHora: "",
     prioridad: "normal",
     descripcion: "",
   });
@@ -21,6 +21,7 @@ function TaskEditModal({ open, onClose, task, onSave }) {
       setFormData({
         nombre: task.nombre || "",
         expira: task.expira || "",
+        fechaHora: task.fechaHora || "",
         prioridad: task.prioridad || "normal",
         descripcion: task.descripcion || "",
       });
@@ -45,21 +46,6 @@ function TaskEditModal({ open, onClose, task, onSave }) {
     }));
   };
 
-  const getPriorityColor = (prioridad) => {
-    switch (prioridad) {
-      case "alta":
-        return "text-red-600 bg-red-100";
-      case "media":
-        return "text-yellow-600 bg-yellow-100";
-      case "normal":
-        return "text-blue-600 bg-blue-100";
-      case "baja":
-        return "text-green-600 bg-green-100";
-      default:
-        return "text-blue-600 bg-blue-100";
-    }
-  };
-
   if (!open) return null;
 
   return (
@@ -82,10 +68,10 @@ function TaskEditModal({ open, onClose, task, onSave }) {
         </>
       }
     >
-      <div className="space-y-4">
+      <div className="space-y-3">
         {/* Nombre de la tarea */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
             Nombre de la tarea *
           </label>
           <input
@@ -101,9 +87,72 @@ function TaskEditModal({ open, onClose, task, onSave }) {
           </div>
         </div>
 
+        {/* Fila con Fecha/Hora y Prioridad */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {/* Fecha y hora de expiración */}
+          <div>
+            <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
+              <ScheduleIcon className="mr-1" fontSize="small" />
+              Fecha y hora
+            </label>
+            <DateTimePicker
+              value={formData.fechaHora || formData.expira}
+              onChange={(datetime) => handleInputChange("fechaHora", datetime)}
+              placeholder="Seleccionar fecha y hora"
+              includeTime={true}
+              timeLabel="Hora"
+            />
+          </div>
+
+          {/* Prioridad */}
+          <div>
+            <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
+              <PriorityHighIcon className="mr-1" fontSize="small" />
+              Prioridad
+            </label>
+            <div className="grid grid-cols-2 gap-1">
+              {[
+                {
+                  value: "baja",
+                  label: "Baja",
+                  color: "bg-green-100 text-green-800",
+                },
+                {
+                  value: "normal",
+                  label: "Normal",
+                  color: "bg-blue-100 text-blue-800",
+                },
+                {
+                  value: "media",
+                  label: "Media",
+                  color: "bg-yellow-100 text-yellow-800",
+                },
+                {
+                  value: "alta",
+                  label: "Alta",
+                  color: "bg-red-100 text-red-800",
+                },
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => handleInputChange("prioridad", option.value)}
+                  className={`flex items-center justify-center w-full px-2 py-1.5 border rounded-md transition-all text-xs font-medium ${
+                    formData.prioridad === option.value
+                      ? option.color + " border-current ring-1 ring-black/20"
+                      : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100"
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
         {/* Descripción */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+          <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
             <DescriptionIcon className="mr-1" fontSize="small" />
             Descripción
           </label>
@@ -112,103 +161,13 @@ function TaskEditModal({ open, onClose, task, onSave }) {
             onChange={(e) => handleInputChange("descripcion", e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
             placeholder="Agrega una descripción opcional..."
-            rows={3}
+            rows={2}
             maxLength={500}
           />
           <div className="text-xs text-gray-500 mt-1">
             {formData.descripcion.length}/500 caracteres
           </div>
         </div>
-
-        {/* Fecha de expiración */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-            <ScheduleIcon className="mr-1" fontSize="small" />
-            Fecha de expiración
-          </label>
-          <DatePicker
-            value={formData.expira}
-            onChange={(date) => handleInputChange("expira", date)}
-            placeholder="Seleccionar fecha de expiración"
-          />
-        </div>
-
-        {/* Prioridad */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-            <PriorityHighIcon className="mr-1" fontSize="small" />
-            Prioridad
-          </label>
-          <div className="grid grid-cols-2 gap-2">
-            {[
-              {
-                value: "baja",
-                label: "Baja",
-                color: "bg-green-100 text-green-800",
-              },
-              {
-                value: "normal",
-                label: "Normal",
-                color: "bg-blue-100 text-blue-800",
-              },
-              {
-                value: "media",
-                label: "Media",
-                color: "bg-yellow-100 text-yellow-800",
-              },
-              {
-                value: "alta",
-                label: "Alta",
-                color: "bg-red-100 text-red-800",
-              },
-            ].map((option) => (
-              <Button
-                key={option.value}
-                variant="secondary"
-                onClick={() => handleInputChange("prioridad", option.value)}
-                className={`w-full p-2 border transition-all text-sm font-medium ${
-                  formData.prioridad === option.value
-                    ? option.color + " border-current ring-2 ring-black/20"
-                    : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100"
-                }`}
-              >
-                {option.label}
-              </Button>
-            ))}
-          </div>
-        </div>
-
-        {/* Vista previa */}
-        {formData.nombre && (
-          <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-            <h4 className="text-sm font-medium text-gray-700 mb-2">
-              Vista previa:
-            </h4>
-            <div className="space-y-2">
-              <div className="font-medium">{formData.nombre}</div>
-              {formData.descripcion && (
-                <div className="text-sm text-gray-600">
-                  {formData.descripcion}
-                </div>
-              )}
-              <div className="flex items-center space-x-4 text-xs">
-                {formData.expira && (
-                  <div className="text-sm text-gray-600 mt-2">
-                    {formatearFechaPersonalizada(formData.expira)}
-                  </div>
-                )}
-                <div
-                  className={`text-xs px-2 py-1 rounded-full font-semibold ${getPriorityColor(
-                    formData.prioridad
-                  )}`}
-                >
-                  {formData.prioridad.charAt(0).toUpperCase() +
-                    formData.prioridad.slice(1)}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </Modal>
   );

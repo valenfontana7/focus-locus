@@ -198,37 +198,6 @@ function Lists() {
     return () => window.removeEventListener("drag-end", handleDragEndEvent);
   }, [localTasks, handleMoveTask, handleReorderTask]);
 
-  // Configurar event listener para add-task
-  useEffect(() => {
-    const handleAddTask = (event) => {
-      const { project } = event.detail;
-      if (project === activeProject) {
-        // Crear nueva tarea con valores por defecto
-        const newTask = {
-          id: `task-${Date.now()}`, // ID temporal
-          nombre: "Nueva tarea",
-          prioridad: "media",
-          categoria: "personal",
-          expira: null,
-          fechaHora: null,
-        };
-
-        // Obtener las tareas actuales y agregar la nueva a pendientes
-        const currentTasks = localTasks;
-        const updatedTasks = {
-          ...currentTasks,
-          pendientes: [...currentTasks.pendientes, newTask],
-        };
-
-        // Usar updateProjectTasks directamente
-        updateProjectTasks(activeProject, updatedTasks);
-      }
-    };
-
-    window.addEventListener("add-task", handleAddTask);
-    return () => window.removeEventListener("add-task", handleAddTask);
-  }, [activeProject, localTasks, updateProjectTasks]);
-
   // Configuración para el droppable
   const { setNodeRef } = useDroppable({
     id: "lists-container",
@@ -238,7 +207,7 @@ function Lists() {
   });
 
   const handleRename = useCallback(
-    (taskId, updatedTaskData) => {
+    (taskId, newName) => {
       const updatedTasks = { ...localTasks };
       let found = false;
 
@@ -247,19 +216,10 @@ function Lists() {
           (task) => task.id === taskId
         );
         if (taskIndex !== -1) {
-          // Si updatedTaskData es un string, es solo cambio de nombre (para compatibilidad)
-          if (typeof updatedTaskData === "string") {
-            updatedTasks[listName][taskIndex] = {
-              ...updatedTasks[listName][taskIndex],
-              nombre: updatedTaskData,
-            };
-          } else {
-            // Si es un objeto, actualizar toda la tarea
-            updatedTasks[listName][taskIndex] = {
-              ...updatedTasks[listName][taskIndex],
-              ...updatedTaskData,
-            };
-          }
+          updatedTasks[listName][taskIndex] = {
+            ...updatedTasks[listName][taskIndex],
+            name: newName,
+          };
           found = true;
         }
       });

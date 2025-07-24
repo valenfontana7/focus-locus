@@ -32,30 +32,37 @@ function AppLayout({ children, onMenuClick }) {
           </h1>
         </div>
 
-        <nav className="flex items-center justify-center">
+        <nav className="flex items-center justify-center gap-3 sm:gap-4">
           <Button
             variant="secondary"
-            className="mx-0.5 sm:mx-1 md:mx-2 lg:mx-3 p-0.5 sm:p-1 min-w-0 min-h-0 flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 md:w-auto md:h-auto"
+            className="p-2 sm:p-2.5 md:p-3 min-w-0 min-h-0 flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12"
             onClick={() => setAboutOpen(true)}
             title="¿Qué es FocusLocus?"
           >
             <HelpOutlineSharpIcon
-              fontSize="small"
-              className="!text-xs sm:!text-sm md:!text-base lg:!text-lg"
+              fontSize="medium"
+              className="!text-lg sm:!text-xl md:!text-2xl lg:!text-2xl"
             />
           </Button>
           <Link
             to="#"
-            className="mx-0.5 sm:mx-1 md:mx-2 lg:mx-3 text-black-500 hover:underline"
+            className="p-2 sm:p-2.5 md:p-3 text-black-500 hover:underline flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded"
           >
             <AccountCircleIcon
-              fontSize="small"
-              className="!text-xs sm:!text-sm md:!text-base lg:!text-lg"
+              fontSize="medium"
+              className="!text-lg sm:!text-xl md:!text-2xl lg:!text-2xl"
             />
           </Link>
         </nav>
       </header>
-      <div className="flex-1 flex flex-col overflow-hidden pt-16 sm:pt-[4.5rem] md:pt-20 lg:pt-[5.5rem] xl:pt-24">
+      <div
+        className="app-main-content flex-1 flex flex-col"
+        style={{
+          overflow: "hidden",
+          WebkitOverflowScrolling: "touch",
+          position: "relative",
+        }}
+      >
         {children}
       </div>
       <Modal

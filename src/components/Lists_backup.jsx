@@ -25,10 +25,16 @@ function Lists() {
     async (taskId, fromList, toList) => {
       // Prevenir operaciones concurrentes
       if (isDragOperationInProgress.current) {
+        console.warn("Operación de drag ya en progreso, ignorando:", {
+          taskId,
+          fromList,
+          toList,
+        });
         return;
       }
 
       isDragOperationInProgress.current = true;
+      console.log("handleMoveTask called:", { taskId, fromList, toList });
 
       try {
         // Obtener el estado más actual del contexto
@@ -76,6 +82,7 @@ function Lists() {
   const handleReorderTask = useCallback(
     (taskId, targetListName, newIndex) => {
       if (isDragOperationInProgress.current) {
+        console.warn("Operación de reorder ya en progreso, ignorando");
         return;
       }
 
@@ -116,118 +123,59 @@ function Lists() {
     [activeProject, projectTasks, updateProjectTasks]
   );
 
-  // Listener para eventos de drag desde Home.jsx
-  useEffect(() => {
-    const handleDragEndEvent = (event) => {
-      const { activeId, overId } = event.detail;
+  const handleDragEnd = useCallback(
+    (event) => {
+      const { active, over } = event;
 
-      if (!overId || !activeId) {
+      if (!over || !active) {
+        console.log("❌ No hay over o active válido");
         return;
       }
 
-      // Extraer el nombre de la lista del overId (quitar prefijo "list-" si existe)
-      const rawListName = overId.startsWith("list-")
-        ? overId.replace("list-", "")
-        : overId;
+      const activeId = active.id;
+      const overId = over.id;
 
-      // Convertir a minúsculas para comparación y normalizar espacios
-      const listName = rawListName.toLowerCase().replace(/\s+/g, "");
-      const validLists = ["pendientes", "encurso", "terminadas"];
+      console.log("🎯 Drag end:", { activeId, overId });
 
       // Si se suelta sobre una lista
-      if (validLists.includes(listName)) {
-        // Mapear de vuelta al nombre real de la lista
-        const listNameMapping = {
-          pendientes: "pendientes",
-          encurso: "enCurso",
-          terminadas: "terminadas",
-        };
-        const realListName = listNameMapping[listName];
-
+      if (["pendientes", "enCurso", "terminadas"].includes(overId)) {
         // Determinar de qué lista viene la tarea
         let fromList = null;
-        for (const [currentListName, tasks] of Object.entries(localTasks)) {
+        for (const [listName, tasks] of Object.entries(localTasks)) {
           if (tasks.some((task) => task.id === activeId)) {
-            fromList = currentListName;
+            fromList = listName;
             break;
           }
         }
 
-        if (fromList && fromList !== realListName) {
-          handleMoveTask(activeId, fromList, realListName);
+        if (fromList && fromList !== overId) {
+          console.log("📦 Moviendo entre listas");
+          handleMoveTask(activeId, fromList, overId);
         }
       }
       // Si se suelta sobre una tarea
       else {
-        // Primero determinar en qué lista está la tarea que se está arrastrando
-        let sourceList = null;
-        for (const [currentListName, tasks] of Object.entries(localTasks)) {
-          if (tasks.some((task) => task.id === activeId)) {
-            sourceList = currentListName;
-            break;
-          }
-        }
-
         // Determinar en qué lista está la tarea objetivo
         let targetList = null;
         let targetIndex = 0;
 
-        for (const [currentListName, tasks] of Object.entries(localTasks)) {
+        for (const [listName, tasks] of Object.entries(localTasks)) {
           const index = tasks.findIndex((task) => task.id === overId);
           if (index !== -1) {
-            targetList = currentListName;
+            targetList = listName;
             targetIndex = index;
             break;
           }
         }
 
-        if (sourceList && targetList) {
-          // Si las listas son diferentes, es un movimiento entre listas
-          if (sourceList !== targetList) {
-            handleMoveTask(activeId, sourceList, targetList);
-          }
-          // Si es la misma lista, es reordenamiento
-          else {
-            handleReorderTask(activeId, targetList, targetIndex);
-          }
+        if (targetList) {
+          console.log("🔄 Reordenando dentro de lista");
+          handleReorderTask(activeId, targetList, targetIndex);
         }
       }
-    };
-
-    window.addEventListener("drag-end", handleDragEndEvent);
-    return () => window.removeEventListener("drag-end", handleDragEndEvent);
-  }, [localTasks, handleMoveTask, handleReorderTask]);
-
-  // Configurar event listener para add-task
-  useEffect(() => {
-    const handleAddTask = (event) => {
-      const { project } = event.detail;
-      if (project === activeProject) {
-        // Crear nueva tarea con valores por defecto
-        const newTask = {
-          id: `task-${Date.now()}`, // ID temporal
-          nombre: "Nueva tarea",
-          prioridad: "media",
-          categoria: "personal",
-          expira: null,
-          fechaHora: null,
-        };
-
-        // Obtener las tareas actuales y agregar la nueva a pendientes
-        const currentTasks = localTasks;
-        const updatedTasks = {
-          ...currentTasks,
-          pendientes: [...currentTasks.pendientes, newTask],
-        };
-
-        // Usar updateProjectTasks directamente
-        updateProjectTasks(activeProject, updatedTasks);
-      }
-    };
-
-    window.addEventListener("add-task", handleAddTask);
-    return () => window.removeEventListener("add-task", handleAddTask);
-  }, [activeProject, localTasks, updateProjectTasks]);
+    },
+    [localTasks, handleMoveTask, handleReorderTask]
+  );
 
   // Configuración para el droppable
   const { setNodeRef } = useDroppable({
@@ -238,7 +186,7 @@ function Lists() {
   });
 
   const handleRename = useCallback(
-    (taskId, updatedTaskData) => {
+    (taskId, newName) => {
       const updatedTasks = { ...localTasks };
       let found = false;
 
@@ -247,19 +195,10 @@ function Lists() {
           (task) => task.id === taskId
         );
         if (taskIndex !== -1) {
-          // Si updatedTaskData es un string, es solo cambio de nombre (para compatibilidad)
-          if (typeof updatedTaskData === "string") {
-            updatedTasks[listName][taskIndex] = {
-              ...updatedTasks[listName][taskIndex],
-              nombre: updatedTaskData,
-            };
-          } else {
-            // Si es un objeto, actualizar toda la tarea
-            updatedTasks[listName][taskIndex] = {
-              ...updatedTasks[listName][taskIndex],
-              ...updatedTaskData,
-            };
-          }
+          updatedTasks[listName][taskIndex] = {
+            ...updatedTasks[listName][taskIndex],
+            name: newName,
+          };
           found = true;
         }
       });

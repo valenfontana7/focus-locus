@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Task from "./Task";
 import { useDroppable } from "@dnd-kit/core";
 import Modal from "./Modal";
@@ -26,8 +26,6 @@ function List({ title, items, showExpira, onRename, onDelete }) {
   });
   // Estado intermedio para edición robusta en iOS
   const [pendingEditTask, setPendingEditTask] = useState(null);
-  const [taskMinHeight, setTaskMinHeight] = useState(0);
-  const firstTaskRef = useRef(null);
 
   // Droppable para la lista completa
   const { isOver: isOverList, setNodeRef: setListNodeRef } = useDroppable({
@@ -37,6 +35,11 @@ function List({ title, items, showExpira, onRename, onDelete }) {
       listTitle: title,
     },
   });
+
+  // Debug: Verificar el ID generado
+  React.useEffect(() => {
+    console.log(`List ${title} - Droppable ID: list-${title}`);
+  }, [title]);
 
   const style = {
     color: isOverList ? "#6366f1" : undefined,
@@ -69,13 +72,6 @@ function List({ title, items, showExpira, onRename, onDelete }) {
     }
     setEditModal({ open: false, task: null });
   };
-
-  useEffect(() => {
-    if (firstTaskRef.current) {
-      const extra = window.innerWidth < 640 ? 32 : 8; // más margen en mobile
-      setTaskMinHeight(firstTaskRef.current.offsetHeight + extra);
-    }
-  }, [items.length]);
 
   // Escuchar eventos globales para editar/eliminar tarea
   useEffect(() => {
@@ -115,18 +111,10 @@ function List({ title, items, showExpira, onRename, onDelete }) {
     >
       <div
         ref={setListNodeRef}
-        style={{
-          ...style,
-          minHeight:
-            items.length > 0
-              ? window.innerWidth < 640
-                ? "200px"
-                : taskMinHeight
-                ? `${taskMinHeight}px`
-                : undefined
-              : undefined,
-        }}
-        className="list-container bg-white lg:rounded-lg shadow p-2 sm:p-2 md:p-2 lg:p-3 xl:p-3 flex flex-col h-full max-h-full lg:mx-2 xl:mx-2 flex-1 ios-safe-margin overflow-hidden"
+        style={style}
+        className="list-container bg-white lg:rounded-lg shadow p-2 sm:p-2 md:p-2 lg:p-3 xl:p-3 flex flex-col flex-1 lg:mx-2 xl:mx-2 ios-safe-margin overflow-hidden min-h-0"
+        data-list-title={title}
+        data-droppable-id={`list-${title}`}
       >
         <div className="flex items-center gap-2 sm:gap-2 mb-2 sm:mb-2">
           <h3 className="text-sm sm:text-base md:text-lg font-bold flex-1">
@@ -136,13 +124,14 @@ function List({ title, items, showExpira, onRename, onDelete }) {
             {items.length}
           </span>
         </div>
-        <ul className="list__container space-y-0.5 sm:space-y-1 md:space-y-2 lg:space-y-3 xl:space-y-4 flex-1 min-h-0 overflow-y-auto max-h-full">
-          {items.map((tarea, idx) => (
-            <li key={tarea.id} ref={idx === 0 ? firstTaskRef : null}>
+        <ul className="list__container space-y-0.5 sm:space-y-1 md:space-y-2 lg:space-y-3 xl:space-y-4 flex-1 min-h-0 overflow-y-auto">
+          {items.map((tarea) => (
+            <li key={tarea.id}>
               <Task
                 id={tarea.id}
                 nombre={tarea.nombre}
                 expira={showExpira ? tarea.expira : undefined}
+                fechaHora={tarea.fechaHora}
                 prioridad={tarea.prioridad}
                 descripcion={tarea.descripcion}
                 taskObj={tarea}

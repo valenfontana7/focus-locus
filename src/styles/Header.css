@@ -47,7 +47,44 @@
 /* En móviles, asegurar que el header no cause problemas */
 @media (max-width: 639px) {
   .header {
-    margin-bottom: 0.5rem !important;
+    margin-bottom: 0 !important; /* Eliminar margin-bottom innecesario */
     height: 4rem !important;
+  }
+}
+
+/* Estilos para el contenido principal que compensa el header fijo */
+.app-main-content {
+  padding-top: 4rem; /* Espacio para el header fijo en mobile */
+  height: 100svh; /* Altura completa del viewport */
+  overflow: hidden; /* Evitar scroll en el contenedor principal */
+  box-sizing: border-box; /* Incluir padding en el cálculo de altura */
+}
+
+/* Padding responsive para el contenido principal */
+@media (min-width: 640px) {
+  .app-main-content {
+    padding-top: 4.5rem;
+    height: 100svh; /* Altura completa del viewport */
+  }
+}
+
+@media (min-width: 768px) {
+  .app-main-content {
+    padding-top: 5rem;
+    height: 100svh; /* Altura completa del viewport */
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-main-content {
+    padding-top: 5.5rem;
+    height: 100svh; /* Altura completa del viewport */
+  }
+}
+
+@media (min-width: 1280px) {
+  .app-main-content {
+    padding-top: 6rem;
+    height: 100svh; /* Altura completa del viewport */
   }
 }

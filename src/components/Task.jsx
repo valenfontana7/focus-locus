@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
-import { formatearFechaPersonalizada } from "../utils/dateUtils";
+import { formatearFechaConHora } from "../utils/dateUtils";
 import { createPortal } from "react-dom";
 import Button from "./Button";
 import "../styles/Task.css";
@@ -12,6 +12,7 @@ import "../styles/Task.css";
  * @param {string} id - Id único de la tarea.
  * @param {string} nombre - Nombre de la tarea.
  * @param {string} [expira] - Fecha de expiración (opcional).
+ * @param {string} [fechaHora] - Fecha y hora específica (opcional).
  * @param {string} [prioridad] - Prioridad de la tarea (baja, normal, media, alta).
  * @param {string} [descripcion] - Descripción de la tarea.
  * @param {function} [onRename] - Función para renombrar la tarea.
@@ -21,6 +22,7 @@ function Task({
   id,
   nombre,
   expira,
+  fechaHora,
   prioridad = "normal",
   descripcion,
   isOverlay = false,
@@ -114,7 +116,7 @@ function Task({
           {/* Icono de drag con mejor diseño y alineación vertical */}
           <span
             ref={setCombinedRef}
-            className="drag-handle cursor-move text-gray-300 hover:text-gray-500 flex-shrink-0 transition-colors duration-200 flex items-center"
+            className="drag-handle cursor-move text-gray-300 hover:text-gray-500 flex-shrink-0 transition-colors duration-200 flex items-center p-1 sm:p-1.5 md:p-2"
             style={{ touchAction: "none" }}
             title="Arrastrar tarea"
             tabIndex={-1}
@@ -122,7 +124,7 @@ function Task({
             {...(isOverlay ? {} : attributes)}
             {...(isOverlay ? {} : listeners)}
           >
-            <DragIndicatorIcon className="text-base sm:text-lg md:text-xl opacity-60 hover:opacity-100 transition-opacity" />
+            <DragIndicatorIcon className="text-xl sm:text-2xl md:text-3xl opacity-60 hover:opacity-100 transition-opacity" />
           </span>
 
           <div className="flex-1 min-w-0">
@@ -172,11 +174,11 @@ function Task({
             )}
 
             {/* Fecha de expiración con mejor diseño */}
-            {expira && (
+            {(fechaHora || expira) && (
               <div className="date-container inline-flex items-center gap-1 sm:gap-1.5 md:gap-2 px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 md:py-1.5 bg-gray-50 rounded-lg text-xs text-gray-600 border">
                 <span className="text-blue-500">📅</span>
                 <span className="font-medium">
-                  {formatearFechaPersonalizada(expira)}
+                  {formatearFechaConHora(fechaHora || expira)}
                 </span>
               </div>
             )}

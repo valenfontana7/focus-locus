@@ -8,7 +8,7 @@
   - Se adapta automáticamente al tamaño del header
 */
 .home {
-  /* FLEX LAYOUT - Ocupar todo el espacio disponible */
+  /* FLEX LAYOUT - Ocupar todo el espacio disponible del contenedor padre controlado */
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -19,14 +19,26 @@
   padding: 0;
   overflow: hidden;
 
+  /* iOS Safari específico - Altura flexible dentro del contenedor controlado */
+  min-height: 0; /* Importante para flex children */
+
   /* Evitar interferencias */
   box-sizing: border-box;
+
+  /* Mejorar rendimiento en iOS */
+  -webkit-overflow-scrolling: touch;
+  transform: translateZ(0);
+
+  /* Prevenir zoom en iOS */
+  touch-action: manipulation;
 
   /* Estilo visual - Sombra más prominente */
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.05);
   /* Sin border-radius en mobile para que llegue hasta los bordes */
-} /* 
+}
+
+/* 
   📋 HOME CONTENT - Contenedor de contenido simplificado
   - Ocupa toda la altura del .home
   - Layout responsivo simple
@@ -44,7 +56,11 @@
   margin: 0;
   padding: 0;
   width: 100%;
-  height: 100%;
+  min-height: 0; /* Importante para flex children */
+
+  /* iOS Safari optimizations */
+  -webkit-overflow-scrolling: touch;
+  transform: translateZ(0);
 }
 
 /*
@@ -58,17 +74,20 @@
   display: flex;
   flex-direction: column;
   /* Sin border-radius en mobile para que llegue hasta los bordes */
-  overflow-y: auto; /* Permitir scroll interno si es necesario */
+  overflow: hidden; /* Sin scroll en el contenedor principal */
 
   /* Sin padding en mobile para que el fondo llegue completamente a los bordes */
   padding: 0;
   margin: 0;
   width: 100%;
-  min-height: 100%;
+  min-height: 0; /* Importante para flex children */
 
-  /* Eliminar explícitamente margin-bottom y border-bottom en mobile */
-  margin-bottom: 0 !important;
-  border-bottom: none !important;
+  /* iOS Safari optimizations */
+  -webkit-overflow-scrolling: touch;
+  transform: translateZ(0);
+  /* Prevenir bounce en iOS */
+  overscroll-behavior: none;
+  -webkit-overscroll-behavior: none;
 }
 
 /* ===========================================
@@ -78,7 +97,8 @@
 /* Tablet y Desktop - Layout horizontal */
 @media (min-width: 640px) {
   .home {
-    /* Mantener flex: 1 para usar espacio disponible */
+    /* Usar altura flexible controlada por el contenedor padre */
+    min-height: 0;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -87,7 +107,8 @@
 
 @media (min-width: 768px) {
   .home {
-    /* Mantener flex: 1 para usar espacio disponible */
+    /* Usar altura flexible controlada por el contenedor padre */
+    min-height: 0;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -96,7 +117,8 @@
 
 @media (min-width: 1024px) {
   .home {
-    /* En desktop: usar toda la altura disponible del contenedor padre */
+    /* En desktop: altura flexible con márgenes */
+    min-height: 0;
     flex: 1;
     width: calc(100% - 1rem);
     margin: 0.5rem;
@@ -112,7 +134,7 @@
     flex: 1;
     display: flex;
     overflow: hidden;
-    height: 100%;
+    min-height: 0;
   }
 
   .home__content-main {
@@ -126,13 +148,14 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    height: 100%;
-    min-height: 100%;
+    min-height: 0; /* Importante para flex children */
   }
 }
 
 @media (min-width: 1280px) {
   .home {
+    /* En desktop XL: altura flexible controlada por el contenedor padre */
+    min-height: 0;
     flex: 1;
     border-radius: 16px;
     overflow: hidden;
@@ -144,7 +167,7 @@
     flex: 1;
     display: flex;
     overflow: hidden;
-    height: 100%;
+    min-height: 0;
   }
 
   .home__content-main {
@@ -153,8 +176,7 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    height: 100%;
-    min-height: 100%;
+    min-height: 0; /* Importante para flex children */
   }
 }
 
@@ -191,16 +213,137 @@
   📜 LIST CONTAINERS - Aquí es donde DEBE ocurrir el scroll
   - Las listas individuales tienen scroll interno
   - El resto de la app NO debe hacer scroll
+  - FLEXBOX CONSERVADOR: flex: 1 con min-height: 0
 */
 .list__container {
-  overflow-y: auto;
+  overflow-y: auto !important;
   touch-action: pan-y;
   -webkit-overflow-scrolling: touch;
-  max-height: 100%;
+  flex: 1 !important;
+  min-height: 0 !important;
 
   /* Scrollbar personalizado */
   scrollbar-width: thin;
   scrollbar-color: #cbd5e0 #f7fafc;
+}
+
+/* Reglas específicas para forzar altura completa en listas - FLEXBOX CONSERVADOR */
+div[class*="list-container"] {
+  flex: 1 !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+ul[class*="list__container"] {
+  flex: 1 !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+}
+
+/* iOS Safari específico - MAXIMIZAR ALTURA con alturas mínimas conservadoras */
+/* Usar clase JavaScript para detección más confiable */
+.ios-safari .lists-container {
+  flex: 1 !important;
+  min-height: 280px !important; /* Reducido de 350px */
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  max-height: 92vh !important; /* Incrementado de 88vh para más altura */
+}
+
+.ios-safari .list-container {
+  flex: 1 !important;
+  min-height: 120px !important; /* Reducido de 150px */
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.ios-safari .list__container {
+  flex: 1 !important;
+  min-height: 100px !important; /* Reducido de 120px */
+  overflow-y: auto !important;
+}
+
+/* Reglas específicas para iOS Safari en mobile - ALTURAS CONSERVADORAS */
+@media (max-width: 640px) {
+  .ios-safari .lists-container {
+    flex: 1 !important;
+    min-height: 40vh !important; /* Reducido de 50vh */
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    max-height: 90vh !important; /* Incrementado de 85vh para más altura */
+  }
+
+  .ios-safari .list-container {
+    flex: 1 !important;
+    min-height: 15vh !important; /* Reducido de 20vh */
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  .ios-safari .list__container {
+    flex: 1 !important;
+    min-height: 12vh !important; /* Reducido de 15vh */
+    overflow-y: auto !important;
+  }
+}
+
+/* Fallback con @supports como backup - FLEXBOX CON ALTURAS CONSERVADORAS */
+@supports (-webkit-touch-callout: none) {
+  /* Hacer las reglas más específicas para iOS Safari en mobile */
+  @media (max-width: 640px) {
+    .lists-container {
+      flex: 1 !important;
+      min-height: 40vh !important; /* Reducido de 50vh */
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+      max-height: 87vh !important; /* Más conservador */
+    }
+
+    .list-container {
+      flex: 1 !important;
+      min-height: 15vh !important; /* Reducido de 20vh */
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+    }
+
+    .list__container {
+      flex: 1 !important;
+      min-height: 12vh !important; /* Reducido de 15vh */
+      overflow-y: auto !important;
+    }
+  }
+
+  /* Reglas generales de iOS Safari - flexbox con alturas conservadoras */
+  div[class*="list-container"] {
+    flex: 1 !important;
+    min-height: 120px !important; /* Reducido de 150px */
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  ul[class*="list__container"] {
+    flex: 1 !important;
+    min-height: 100px !important; /* Reducido de 120px */
+    overflow-y: auto !important;
+  }
+
+  .lists-container {
+    flex: 1 !important;
+    min-height: 280px !important; /* Reducido de 350px */
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    max-height: 90vh !important; /* Fallback con viewport */
+  }
 }
 
 .list__container::-webkit-scrollbar {
@@ -240,6 +383,24 @@
   background: white;
 }
 
+/* Asegurar que todos los contenedores de lista ocupen altura completa - FLEXBOX CONSERVADOR */
+.list-container {
+  flex: 1 !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+/* Regla global para contenedor de listas - FLEXBOX CONSERVADOR */
+.lists-container {
+  flex: 1 !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
 /* Border-radius para listas solo en desktop */
 @media (min-width: 1024px) {
   .list {
@@ -263,7 +424,7 @@
    OPTIMIZACIÓN DE LISTAS PARA DESKTOP
    =========================================== */
 
-/* Optimizaciones adicionales para mobile */
+/* Optimizaciones adicionales para mobile - MAXIMIZAR ALTURA DE LISTAS */
 @media (max-width: 640px) {
   /* Asegurar que no hay espacio desperdiciado */
   body,
@@ -273,66 +434,195 @@
     overflow-x: hidden;
   }
 
-  /* Optimizar altura del navbar dentro de listas */
-  .navbar {
-    min-height: 2.5rem; /* Más compacto */
-  }
-
-  /* Reducir espacio entre elementos en mobile */
+  /* Reducir padding del contenido principal en mobile para maximizar altura de listas */
   .home__content-main {
-    padding: 0.25rem !important;
+    padding: 0.125rem !important; /* Aún más reducido */
   }
 
-  /* Optimizar contenedor de listas para mobile */
+  /* Optimizar contenedor de listas para mobile - SOBRESCRIBIR TAILWIND */
   .lists-container {
-    gap: 0.25rem !important;
-    padding: 0.25rem !important;
+    gap: 0.0625rem !important; /* Aún más reducido - sobrescribir gap-0.5 */
+    padding: 0.125rem !important; /* Casi sin padding - sobrescribir p-1 */
+    /* Asegurar que las listas usen toda la altura disponible en mobile */
+    flex: 1 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
   }
 
-  /* Optimizar altura de header en listas */
-  .list-container h3 {
-    font-size: 0.875rem;
-    line-height: 1.2;
-    margin-bottom: 0.25rem;
+  /* Sobrescribir clases específicas de Tailwind en el contenedor de listas */
+  .lists-container.p-1 {
+    padding: 0.125rem !important; /* Sobrescribir p-1 */
   }
 
-  /* Badge de contador más pequeño */
-  .list-container span {
-    font-size: 0.625rem;
-    padding: 0.125rem 0.375rem;
+  .lists-container.gap-0\.5 {
+    gap: 0.0625rem !important; /* Sobrescribir gap-0.5 */
+  }
+
+  /* Contenedor individual de lista en mobile - Solo para navegadores NO iOS Safari */
+  body:not(.ios-safari) .list-container {
+    flex: 1 !important;
+    min-height: 200px !important; /* Altura mínima específica */
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    padding: 0.375rem !important; /* Reducir padding interno de las listas */
+  }
+
+  /* Sobrescribir clases específicas de Tailwind para padding reducido - Solo para navegadores NO iOS Safari */
+  body:not(.ios-safari) .list-container.p-2 {
+    padding: 0.375rem !important; /* Sobrescribir p-2 de Tailwind */
+    min-height: 200px !important; /* Altura mínima específica */
+  }
+
+  /* Reducir gap y margin específicos del header */
+  .list-container .flex.items-center.gap-2 {
+    margin-bottom: 0.25rem !important; /* Reducir margen del header */
+    gap: 0.25rem !important; /* Reducir gap en header */
+  }
+
+  .list-container .mb-2 {
+    margin-bottom: 0.25rem !important; /* Sobrescribir mb-2 de Tailwind */
+  }
+
+  /* La lista UL debe ocupar toda la altura disponible - Solo para navegadores NO iOS Safari */
+  body:not(.ios-safari) .list__container {
+    flex: 1 !important;
+    min-height: 150px !important; /* Altura mínima para la lista de tareas */
+    overflow-y: auto !important;
+  }
+
+  /* Sobrescribir específicamente las clases space-y de Tailwind */
+  .list__container.space-y-0\.5 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.0625rem !important; /* Aún más compacto */
+  }
+
+  .list__container.space-y-1 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.0625rem !important; /* Aún más compacto */
+  }
+
+  /* Reducir márgenes de los elementos internos de lista */
+  .list-container .lg\\:mx-2,
+  .list-container .xl\\:mx-2 {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Asegurar que las tareas individuales tengan menos espacio */
+  .list__container li {
+    margin-bottom: 0.0625rem !important;
+  }
+
+  /* REGLA GLOBAL: Forzar altura mínima y padding mínimo en mobile - Solo para navegadores NO iOS Safari */
+  body:not(.ios-safari) .list-container,
+  body:not(.ios-safari) .list-container.p-2,
+  body:not(.ios-safari) .list-container.sm\\:p-2,
+  body:not(.ios-safari) .list-container.md\\:p-2 {
+    padding: 0.25rem !important; /* Forzar padding mínimo */
+    min-height: 200px !important; /* Forzar altura mínima */
+  }
+
+  body:not(.ios-safari) .lists-container,
+  body:not(.ios-safari) .lists-container.p-1,
+  body:not(.ios-safari) .lists-container.sm\\:p-2,
+  body:not(.ios-safari) .lists-container.md\\:p-3 {
+    padding: 0.125rem !important; /* Forzar padding mínimo */
+    gap: 0.0625rem !important; /* Forzar gap mínimo */
+    min-height: 450px !important; /* Altura mínima para el contenedor completo */
+  }
+
+  /* Forzar altura específica en el UL de tareas - Solo para navegadores NO iOS Safari */
+  body:not(.ios-safari) ul.list__container,
+  body:not(.ios-safari) .list__container,
+  body:not(.ios-safari) .list__container.space-y-0\.5,
+  body:not(.ios-safari) .list__container.space-y-1 {
+    min-height: 150px !important; /* Altura mínima específica */
+    flex: 1 !important;
+  }
+
+  /* REGLA ULTRA-ESPECÍFICA: Solo para navegadores NO iOS Safari en mobile */
+  @media (max-width: 640px) {
+    body:not(.ios-safari) .lists-container {
+      min-height: 60vh !important; /* Al menos 60% del viewport */
+    }
+
+    body:not(.ios-safari) .list-container {
+      min-height: 25vh !important; /* Al menos 25% del viewport por lista */
+    }
+
+    body:not(.ios-safari) .list__container {
+      min-height: 20vh !important; /* Al menos 20% del viewport para las tareas */
+    }
+  }
+}
+
+/* Mobile Android/Chrome específico - FLEXBOX CON ALTURAS MÍNIMAS */
+/* Clase que se aplicará vía JavaScript para navegadores no-iOS */
+.non-ios-mobile .lists-container {
+  flex: 1 !important;
+  min-height: 450px !important; /* Altura mínima específica */
+}
+
+.non-ios-mobile .list-container {
+  flex: 1 !important;
+  min-height: 200px !important; /* Altura mínima específica */
+}
+
+.non-ios-mobile .list__container {
+  flex: 1 !important;
+  min-height: 150px !important; /* Altura mínima específica */
+}
+
+/* Fallback: usar viewport width como detector - FLEXBOX CON ALTURAS MÍNIMAS */
+@media (max-width: 640px) and (min-resolution: 1dppx) {
+  /* Esto debería aplicarse a la mayoría de Android pero no iOS */
+  body:not(.ios-safari) .lists-container {
+    flex: 1 !important;
+    min-height: 60vh !important; /* Al menos 60% del viewport */
+  }
+
+  body:not(.ios-safari) .list-container {
+    flex: 1 !important;
+    min-height: 25vh !important; /* Al menos 25% del viewport por lista */
+  }
+
+  body:not(.ios-safari) .list__container {
+    flex: 1 !important;
+    min-height: 20vh !important; /* Al menos 20% del viewport para las tareas */
   }
 }
 
 /* Contenedor de listas - optimizado para desktop */
 @media (min-width: 1024px) {
   .lists-container {
-    height: 100%;
-    max-height: 100%;
-    overflow: hidden;
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
     /* Flex layout optimizado */
     display: flex !important;
     flex-direction: row !important;
     gap: 0.75rem;
     padding: 0.5rem;
+    height: 100% !important;
   }
 
   /* Contenedor individual de lista */
   .list-container {
-    height: 100%;
-    max-height: 100%;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    flex: 1 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    height: 100% !important;
   }
 
-  /* Lista de tareas - con scroll interno */
+  /* La lista UL debe ocupar toda la altura disponible */
   .list__container {
-    flex: 1;
-    height: auto;
-    max-height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
+    flex: 1 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    overflow-y: auto !important;
   }
 }
 
@@ -340,6 +630,9 @@
   .lists-container {
     gap: 1rem;
     padding: 0.75rem;
+    flex: 1 !important;
+    min-height: 0 !important;
+    height: 100% !important;
   }
 }
 
@@ -360,5 +653,8 @@
   .lists-container {
     gap: 1.25rem;
     padding: 1rem;
+    flex: 1 !important;
+    min-height: 0 !important;
+    height: 100% !important;
   }
 }

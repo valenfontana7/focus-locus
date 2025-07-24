@@ -43,6 +43,11 @@ function parsearFechaLocal(fecha) {
     return new Date(año, mes - 1, dia); // mes - 1 porque Date usa base 0 para meses
   }
 
+  // Si es un string con fecha y hora (ISO format)
+  if (typeof fecha === "string") {
+    return new Date(fecha);
+  }
+
   return new Date(fecha);
 }
 
@@ -224,6 +229,11 @@ export function estaVencida(fecha) {
   const fechaObj = parsearFechaLocal(fecha);
   const hoy = new Date();
 
+  // Si la fecha incluye hora, comparar con hora exacta
+  if (typeof fecha === "string" && fecha.includes("T")) {
+    return fechaObj < hoy;
+  }
+
   // Resetear horas para comparar solo fechas
   const fechaSinHora = new Date(
     fechaObj.getFullYear(),
@@ -233,4 +243,62 @@ export function estaVencida(fecha) {
   const hoySinHora = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
 
   return fechaSinHora < hoySinHora;
+}
+
+/**
+ * Formatea una fecha con hora de manera amigable
+ * @param {string|Date} fecha - Fecha con hora a formatear
+ * @returns {string} Fecha formateada con hora
+ */
+export function formatearFechaConHora(fecha) {
+  if (!fecha) return "";
+
+  const fechaObj = parsearFechaLocal(fecha);
+  const fechaFormateada = formatearFechaPersonalizada(fecha);
+
+  // Verificar si la fecha tiene componente de hora (no es exactamente medianoche)
+  const tieneHora = fechaObj.getHours() !== 0 || fechaObj.getMinutes() !== 0;
+
+  // Si tiene hora específica, mostrarla
+  if (tieneHora) {
+    const hora = fechaObj.toLocaleTimeString("es-ES", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    return `${fechaFormateada} a las ${hora}`;
+  }
+
+  return fechaFormateada;
+}
+
+/**
+ * Verifica si una fecha está próxima a vencer (dentro de las próximas 24 horas)
+ * @param {string|Date} fecha - Fecha a verificar
+ * @returns {boolean} true si está próxima a vencer
+ */
+export function estaProximaAVencer(fecha) {
+  if (!fecha) return false;
+
+  const fechaObj = parsearFechaLocal(fecha);
+  const ahora = new Date();
+  const en24Horas = new Date(ahora.getTime() + 24 * 60 * 60 * 1000);
+
+  // Si la fecha incluye hora, usar comparación exacta
+  if (typeof fecha === "string" && fecha.includes("T")) {
+    return fechaObj > ahora && fechaObj <= en24Horas;
+  }
+
+  // Para fechas sin hora, considerar próximo si es mañana
+  const fechaSinHora = new Date(
+    fechaObj.getFullYear(),
+    fechaObj.getMonth(),
+    fechaObj.getDate()
+  );
+  const mananaSinHora = new Date(
+    ahora.getFullYear(),
+    ahora.getMonth(),
+    ahora.getDate() + 1
+  );
+
+  return fechaSinHora.getTime() === mananaSinHora.getTime();
 }

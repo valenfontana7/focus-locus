@@ -6,6 +6,21 @@ import { TaskActionContext } from "./context/TaskActionContext";
 // Importar el fix de viewport para iOS Safari
 import "./utils/viewportFix.js";
 
+// Detectar navegador y aplicar clase CSS correspondiente
+const detectBrowser = () => {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+  if (isIOS && isSafari) {
+    document.body.classList.add("ios-safari");
+  } else if (!isIOS) {
+    document.body.classList.add("non-ios-mobile");
+  }
+};
+
+// Ejecutar detección al cargar
+detectBrowser();
+
 const noop = () => {};
 
 createRoot(document.getElementById("root")).render(

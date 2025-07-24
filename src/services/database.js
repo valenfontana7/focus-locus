@@ -164,6 +164,7 @@ class DatabaseService {
             nombre: task.name,
             descripcion: task.description,
             expira: task.due_date,
+            fechaHora: task.fecha_hora,
             prioridad: task.priority,
             position: task.position,
           };
@@ -190,6 +191,16 @@ class DatabaseService {
   async createTask(taskData, userId = null) {
     if (this.useSupabase && userId) {
       try {
+        // Limpiar valores de fecha - convertir strings vacíos a null
+        const dueDateValue =
+          taskData.expira && taskData.expira.trim() !== ""
+            ? taskData.expira
+            : null;
+        const fechaHoraValue =
+          taskData.fechaHora && taskData.fechaHora.trim() !== ""
+            ? taskData.fechaHora
+            : null;
+
         const { data, error } = await supabase
           .from("tasks")
           .insert([
@@ -200,7 +211,8 @@ class DatabaseService {
               description: taskData.descripcion || "",
               status: taskData.status || "pendientes",
               priority: taskData.prioridad || "normal",
-              due_date: taskData.expira,
+              due_date: dueDateValue,
+              fecha_hora: fechaHoraValue,
               position: taskData.position || 0,
             },
           ])
@@ -215,6 +227,7 @@ class DatabaseService {
           nombre: data.name,
           descripcion: data.description,
           expira: data.due_date,
+          fechaHora: data.fecha_hora,
           prioridad: data.priority,
           position: data.position,
         };
@@ -235,7 +248,19 @@ class DatabaseService {
         if (updates.descripcion !== undefined)
           dbUpdates.description = updates.descripcion;
         if (updates.prioridad) dbUpdates.priority = updates.prioridad;
-        if (updates.expira) dbUpdates.due_date = updates.expira;
+        // Manejar fechas correctamente - convertir strings vacíos a null
+        if (updates.expira !== undefined) {
+          dbUpdates.due_date =
+            updates.expira && updates.expira.trim() !== ""
+              ? updates.expira
+              : null;
+        }
+        if (updates.fechaHora !== undefined) {
+          dbUpdates.fecha_hora =
+            updates.fechaHora && updates.fechaHora.trim() !== ""
+              ? updates.fechaHora
+              : null;
+        }
         if (updates.status) dbUpdates.status = updates.status;
         if (updates.position !== undefined)
           dbUpdates.position = updates.position;

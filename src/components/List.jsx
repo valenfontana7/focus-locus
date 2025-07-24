@@ -98,91 +98,85 @@ function List({ title, items, showExpira, onRename, onDelete }) {
   }, [items]);
 
   return (
-    <TaskActionContext.Provider
-      value={{
-        triggerEdit: (task) => setPendingEditTask(task),
-        triggerDelete: (task) =>
-          setDeleteModal({
-            open: true,
-            taskId: task.id,
-            taskName: task.nombre,
-          }),
-      }}
-    >
-      <div
-        ref={setListNodeRef}
-        style={style}
-        className="list-container bg-white lg:rounded-lg shadow p-2 sm:p-2 md:p-2 lg:p-3 xl:p-3 flex flex-col flex-1 lg:mx-2 xl:mx-2 ios-safe-margin overflow-hidden min-h-0"
-        data-list-title={title}
-        data-droppable-id={`list-${title}`}
+    <div className="list-wrapper">
+      <TaskActionContext.Provider
+        value={{
+          triggerEdit: (task) => setPendingEditTask(task),
+          triggerDelete: (task) =>
+            setDeleteModal({
+              open: true,
+              taskId: task.id,
+              taskName: task.nombre,
+            }),
+        }}
       >
-        <div className="flex items-center gap-2 sm:gap-2 mb-2 sm:mb-2">
-          <h3 className="text-sm sm:text-base md:text-lg font-bold flex-1">
-            {title}
-          </h3>
-          <span className="bg-gray-200 text-gray-700 text-sm sm:text-xs px-2 sm:px-2 py-1 sm:py-1 rounded-full font-semibold">
-            {items.length}
-          </span>
-        </div>
-        <ul className="list__container space-y-0.5 sm:space-y-1 md:space-y-2 lg:space-y-3 xl:space-y-4 flex-1 min-h-0 overflow-y-auto">
-          {items.map((tarea) => (
-            <li key={tarea.id}>
-              <Task
-                id={tarea.id}
-                nombre={tarea.nombre}
-                expira={showExpira ? tarea.expira : undefined}
-                fechaHora={tarea.fechaHora}
-                prioridad={tarea.prioridad}
-                descripcion={tarea.descripcion}
-                taskObj={tarea}
-              />
-            </li>
-          ))}
-          {items.length === 0 && (
-            <li className="text-gray-500 text-center py-1 sm:py-2 md:py-3 lg:py-4 xl:py-5 text-xs sm:text-sm md:text-base">
-              No hay tareas
-            </li>
-          )}
-          {items.length > 3 && (
-            <li className="text-blue-500 text-center py-1 text-xs border-t border-gray-200 mt-2">
-              ↑ Scroll para ver más tareas ↑
-            </li>
-          )}
-        </ul>
-        <Modal
-          open={deleteModal.open}
-          onClose={() =>
-            setDeleteModal({ open: false, taskId: null, taskName: "" })
-          }
-          title="¿Eliminar tarea?"
-          actions={
-            <>
-              <Button
-                variant="cancel"
-                onClick={() =>
-                  setDeleteModal({ open: false, taskId: null, taskName: "" })
-                }
-                className="mr-2"
-              >
-                Cancelar
-              </Button>
-              <Button variant="danger" onClick={handleConfirmDelete}>
-                Eliminar
-              </Button>
-            </>
-          }
+        <div
+          ref={setListNodeRef}
+          style={style}
+          className="list-container bg-white rounded-lg shadow p-3 flex flex-col"
+          data-list-title={title}
         >
-          ¿Seguro que quieres eliminar la tarea "{deleteModal.taskName}"? Esta
-          acción no se puede deshacer.
-        </Modal>
-        <TaskEditModal
-          open={editModal.open}
-          onClose={() => setEditModal({ open: false, task: null })}
-          task={editModal.task}
-          onSave={handleConfirmEdit}
-        />
-      </div>
-    </TaskActionContext.Provider>
+          <div className="flex items-center gap-2 mb-2">
+            <h3 className="text-base md:text-lg font-bold flex-1">{title}</h3>
+            <span className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full font-semibold">
+              {items.length}
+            </span>
+          </div>
+          <ul className="list__container flex-1 min-h-0 overflow-y-auto space-y-2">
+            {items.map((tarea) => (
+              <li key={tarea.id}>
+                <Task
+                  id={tarea.id}
+                  nombre={tarea.nombre}
+                  expira={showExpira ? tarea.expira : undefined}
+                  fechaHora={tarea.fechaHora}
+                  prioridad={tarea.prioridad}
+                  descripcion={tarea.descripcion}
+                  taskObj={tarea}
+                />
+              </li>
+            ))}
+            {items.length === 0 && (
+              <li className="text-gray-500 text-center py-4 text-sm">
+                No hay tareas
+              </li>
+            )}
+          </ul>
+          <Modal
+            open={deleteModal.open}
+            onClose={() =>
+              setDeleteModal({ open: false, taskId: null, taskName: "" })
+            }
+            title="¿Eliminar tarea?"
+            actions={
+              <>
+                <Button
+                  variant="cancel"
+                  onClick={() =>
+                    setDeleteModal({ open: false, taskId: null, taskName: "" })
+                  }
+                  className="mr-2"
+                >
+                  Cancelar
+                </Button>
+                <Button variant="danger" onClick={handleConfirmDelete}>
+                  Eliminar
+                </Button>
+              </>
+            }
+          >
+            ¿Seguro que quieres eliminar la tarea "{deleteModal.taskName}"? Esta
+            acción no se puede deshacer.
+          </Modal>
+          <TaskEditModal
+            open={editModal.open}
+            onClose={() => setEditModal({ open: false, task: null })}
+            task={editModal.task}
+            onSave={handleConfirmEdit}
+          />
+        </div>
+      </TaskActionContext.Provider>
+    </div>
   );
 }
 

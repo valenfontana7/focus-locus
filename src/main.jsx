@@ -3,8 +3,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
 import { TaskActionContext } from "./context/TaskActionContext";
-// Importar el fix de viewport para iOS Safari
-import "./utils/viewportFix.js";
+import { initializeViewportFix } from "./utils/viewportFix.js";
 
 // Detectar navegador y aplicar clase CSS correspondiente
 const detectBrowser = () => {
@@ -20,6 +19,9 @@ const detectBrowser = () => {
 
 // Ejecutar detección al cargar
 detectBrowser();
+
+// Inicializar el fix de viewport
+initializeViewportFix();
 
 const noop = () => {};
 

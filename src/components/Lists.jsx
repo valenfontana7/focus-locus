@@ -2,6 +2,7 @@ import React, { useEffect, useCallback, useMemo, useRef } from "react";
 import List from "./List";
 import { useDroppable } from "@dnd-kit/core";
 import { useProjectContext } from "../context/ProjectContext";
+import "../styles/Lists.css";
 
 function Lists() {
   const context = useProjectContext();
@@ -294,10 +295,7 @@ function Lists() {
   );
 
   return (
-    <div
-      ref={setNodeRef}
-      className="lists-container flex flex-col sm:flex-row gap-0.5 sm:gap-0.5 md:gap-0.5 lg:gap-0.5 xl:gap-0.5 p-1 sm:p-2 md:p-3 lg:p-2 xl:p-1 flex-1 min-h-0 overflow-hidden"
-    >
+    <div ref={setNodeRef} className="lists-container">
       <List
         title="Pendientes"
         items={localTasks.pendientes}

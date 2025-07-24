@@ -31,7 +31,7 @@ function AppContent() {
   // Si no hay Supabase configurado o hay usuario autenticado, mostrar app
   return (
     <ProjectProvider>
-      <div className="relative">
+      <div style={{ height: "100%" }} className="relative">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<div>About Page</div>} />

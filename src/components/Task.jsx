@@ -106,7 +106,7 @@ function Task({
     <div
       ref={setCombinedRef}
       style={style}
-      className={`task-container flex items-start justify-between group relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-1 sm:p-2 md:p-3 lg:p-4 xl:p-5 border border-gray-100 hover:border-gray-200 ${
+      className={`task-container flex items-center justify-between group relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-1 sm:p-2 md:p-3 lg:p-4 xl:p-5 border border-gray-100 hover:border-gray-200 ${
         isDragging ? "task-dragging" : ""
       } ${isOver ? "task-drop-zone" : ""}`}
     >

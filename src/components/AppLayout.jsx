@@ -55,16 +55,7 @@ function AppLayout({ children, onMenuClick }) {
           </Link>
         </nav>
       </header>
-      <div
-        className="app-main-content flex-1 flex flex-col"
-        style={{
-          overflow: "hidden",
-          WebkitOverflowScrolling: "touch",
-          position: "relative",
-        }}
-      >
-        {children}
-      </div>
+      <div className="app-main-content flex-1 flex flex-col">{children}</div>
       <Modal
         open={aboutOpen}
         onClose={() => setAboutOpen(false)}

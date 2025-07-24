@@ -156,7 +156,6 @@ function Home() {
     document.body.style.touchAction = "";
   };
 
-  // Permitir scroll en contenedores de listas
   useEffect(() => {
     const enableListScroll = () => {
       const listContainers = document.querySelectorAll(".list__container");
@@ -166,22 +165,8 @@ function Home() {
         container.style.webkitOverflowScrolling = "touch";
       });
     };
-
-    // Ejecutar inmediatamente
     enableListScroll();
-
-    // Ejecutar después de un delay para asegurar que las listas estén renderizadas
-    const timeoutId = setTimeout(enableListScroll, 100);
-
-    // Observer para detectar cuando se agregan nuevas listas
-    const observer = new MutationObserver(enableListScroll);
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    return () => {
-      clearTimeout(timeoutId);
-      observer.disconnect();
-    };
-  }, []);
+  }, [projectTasks]);
 
   const getActiveTask = () => {
     if (!activeId) return null;
@@ -211,10 +196,8 @@ function Home() {
         }}
       >
         <div
-          className={`home bg-white rounded-2xl overflow-hidden transition-opacity duration-200 ${
-            !loading && projects.length === 0
-              ? "justify-center no-projects"
-              : ""
+          className={`home ${
+            !loading && projects.length === 0 ? "no-projects" : ""
           }`}
         >
           {projects.length > 0 && (
@@ -228,23 +211,19 @@ function Home() {
           <div className="home__content">
             {/* Sidebar en desktop - dentro del flujo normal, solo si hay proyectos */}
             {projects.length > 0 && (
-              <div className="hidden lg:block lg:static lg:w-auto">
-                <div className="sidebar-container h-full">
-                  <Sidebar
-                    search={search}
-                    setSearch={setSearch}
-                    onClose={closeSidebar}
-                  />
-                </div>
+              <div className="hidden lg:block">
+                <Sidebar
+                  search={search}
+                  setSearch={setSearch}
+                  onClose={closeSidebar}
+                />
               </div>
             )}
 
             <div
               ref={contentMainRef}
-              className={`home__content-main w-full bg-gray-100 lg:rounded-br-2xl ${
-                !loading && projects.length === 0
-                  ? "lg:rounded-tl-2xl lg:rounded-tr-2xl lg:rounded-bl-2xl p-0 shadow-none no-projects"
-                  : "lg:p-1 xl:p-2 lg:border-b-4 lg:border-gray-300"
+              className={`home__content-main ${
+                !loading && projects.length === 0 ? "no-projects" : ""
               }`}
             >
               {loading ? (
@@ -367,7 +346,7 @@ function Home() {
                       </div>
                     )}
                   </div>
-                  <div className="flex-1 min-h-0 overflow-hidden lg:px-0">
+                  <div className="flex flex-col flex-1 min-h-0 overflow-hidden lg:px-0">
                     <Lists />
                   </div>
                 </>

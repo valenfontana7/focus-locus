@@ -55,36 +55,68 @@
 /* Estilos para el contenido principal que compensa el header fijo */
 .app-main-content {
   padding-top: 4rem; /* Espacio para el header fijo en mobile */
+  height: 100vh; /* Fallback para navegadores que no soportan svh */
+  height: calc(var(--vh, 1vh) * 100); /* Usar variable CSS del viewport fix */
   height: 100svh; /* Altura completa del viewport */
+  min-height: calc(var(--vh, 1vh) * 100); /* Fallback con variable CSS */
   overflow: hidden; /* Evitar scroll en el contenedor principal */
   box-sizing: border-box; /* Incluir padding en el cálculo de altura */
+}
+
+/* Reglas específicas para mobile no-Safari */
+@media (max-width: 640px) {
+  body:not(.ios-safari) .app-main-content {
+    height: calc(
+      var(--vh, 1vh) * 100
+    ) !important; /* Forzar altura completa del viewport */
+    min-height: calc(var(--vh, 1vh) * 100) !important;
+  }
+
+  .non-ios-mobile .app-main-content {
+    height: calc(
+      var(--vh, 1vh) * 100
+    ) !important; /* Forzar altura completa del viewport */
+    min-height: calc(var(--vh, 1vh) * 100) !important;
+  }
 }
 
 /* Padding responsive para el contenido principal */
 @media (min-width: 640px) {
   .app-main-content {
     padding-top: 4.5rem;
+    height: 100vh; /* Fallback para navegadores que no soportan svh */
+    height: calc(var(--vh, 1vh) * 100); /* Usar variable CSS del viewport fix */
     height: 100svh; /* Altura completa del viewport */
+    min-height: calc(var(--vh, 1vh) * 100); /* Fallback con variable CSS */
   }
 }
 
 @media (min-width: 768px) {
   .app-main-content {
     padding-top: 5rem;
+    height: 100vh; /* Fallback para navegadores que no soportan svh */
+    height: calc(var(--vh, 1vh) * 100); /* Usar variable CSS del viewport fix */
     height: 100svh; /* Altura completa del viewport */
+    min-height: calc(var(--vh, 1vh) * 100); /* Fallback con variable CSS */
   }
 }
 
 @media (min-width: 1024px) {
   .app-main-content {
     padding-top: 5.5rem;
+    height: 100vh; /* Fallback para navegadores que no soportan svh */
+    height: calc(var(--vh, 1vh) * 100); /* Usar variable CSS del viewport fix */
     height: 100svh; /* Altura completa del viewport */
+    min-height: calc(var(--vh, 1vh) * 100); /* Fallback con variable CSS */
   }
 }
 
 @media (min-width: 1280px) {
   .app-main-content {
     padding-top: 6rem;
+    height: 100vh; /* Fallback para navegadores que no soportan svh */
+    height: calc(var(--vh, 1vh) * 100); /* Usar variable CSS del viewport fix */
     height: 100svh; /* Altura completa del viewport */
+    min-height: calc(var(--vh, 1vh) * 100); /* Fallback con variable CSS */
   }
 }

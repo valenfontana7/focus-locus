@@ -3,6 +3,8 @@ import Navbar from "../components/Navbar.jsx";
 import Sidebar from "../components/Sidebar.jsx";
 import Lists from "../components/Lists.jsx";
 import Modal from "../components/Modal.jsx";
+import DraggableFloatingButtonResponsive from "../components/DraggableFloatingButtonResponsive.jsx";
+import DraggableFloatingButtonDemo from "../components/DraggableFloatingButtonDemo.jsx";
 import { useProjectContext } from "../context/ProjectContext";
 import { useState, useEffect, useRef } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -411,58 +413,67 @@ function Home() {
 
         {/* Botón flotante para acciones en mobile - solo cuando hay proyectos */}
         {projects.length > 0 && (
-          <div className="sm:hidden fixed bottom-4 left-4 z-50">
-            {/* Overlay para cerrar menu al tocar fuera */}
-            {mobileActionsOpen && (
-              <div
-                className="fixed inset-0"
-                style={{ zIndex: 99998 }}
-                onClick={() => setMobileActionsOpen(false)}
-              />
-            )}
+          <DraggableFloatingButtonResponsive
+            storageKey="actions-btn"
+            defaultPosition={{ bottom: 16, left: 16 }}
+            enabled={true}
+            showDragHandle={true}
+          >
+            <div className="sm:hidden">
+              {/* Overlay para cerrar menu al tocar fuera */}
+              {mobileActionsOpen && (
+                <div
+                  className="fixed inset-0"
+                  style={{ zIndex: 99998 }}
+                  onClick={() => setMobileActionsOpen(false)}
+                />
+              )}
 
-            {/* Menú de acciones desplegable */}
-            {mobileActionsOpen && (
-              <div
-                className="absolute bottom-16 left-0 bg-white rounded-lg shadow-lg border border-gray-200 w-48 overflow-hidden"
-                style={{ zIndex: 99999 }}
+              {/* Menú de acciones desplegable */}
+              {mobileActionsOpen && (
+                <div
+                  className="absolute bottom-16 left-0 bg-white rounded-lg shadow-lg border border-gray-200 w-48 overflow-hidden"
+                  style={{ zIndex: 99999 }}
+                >
+                  <div
+                    onClick={() => {
+                      handleMobileAddTask();
+                      setMobileActionsOpen(false);
+                    }}
+                    className="w-full px-5 py-4 text-left hover:bg-gray-50 flex items-center gap-3 border-b border-gray-100 cursor-pointer"
+                  >
+                    <span className="text-xl">+</span>
+                    <span className="font-medium text-base">Agregar tarea</span>
+                  </div>
+                  <div
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent("clear-tasks"));
+                      setMobileActionsOpen(false);
+                    }}
+                    className="w-full px-5 py-4 text-left hover:bg-gray-50 flex items-center gap-3 text-red-600 cursor-pointer"
+                  >
+                    <span className="text-xl">🗑️</span>
+                    <span className="font-medium text-base">
+                      Limpiar tareas
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Botón principal flotante */}
+              <button
+                onClick={() => {
+                  toggleMobileActions();
+                }}
+                className="w-16 h-16 bg-gray-950 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-800 transition-colors"
+                title="Acciones"
               >
-                <div
-                  onClick={() => {
-                    handleMobileAddTask();
-                    setMobileActionsOpen(false);
-                  }}
-                  className="w-full px-5 py-4 text-left hover:bg-gray-50 flex items-center gap-3 border-b border-gray-100 cursor-pointer"
-                >
-                  <span className="text-xl">+</span>
-                  <span className="font-medium text-base">Agregar tarea</span>
-                </div>
-                <div
-                  onClick={() => {
-                    window.dispatchEvent(new CustomEvent("clear-tasks"));
-                    setMobileActionsOpen(false);
-                  }}
-                  className="w-full px-5 py-4 text-left hover:bg-gray-50 flex items-center gap-3 text-red-600 cursor-pointer"
-                >
-                  <span className="text-xl">🗑️</span>
-                  <span className="font-medium text-base">Limpiar tareas</span>
-                </div>
-              </div>
-            )}
-
-            {/* Botón principal flotante */}
-            <button
-              onClick={() => {
-                toggleMobileActions();
-              }}
-              className="w-16 h-16 bg-gray-950 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-800 transition-colors"
-              title="Acciones"
-            >
-              <span className="text-2xl font-bold">
-                {mobileActionsOpen ? "✕" : "+"}
-              </span>
-            </button>
-          </div>
+                <span className="text-2xl font-bold">
+                  {mobileActionsOpen ? "✕" : "+"}
+                </span>
+              </button>
+            </div>
+          </DraggableFloatingButtonResponsive>
         )}
 
         <DragOverlay dropAnimation={null} zIndex={1}>
@@ -478,6 +489,9 @@ function Home() {
           ) : null}
         </DragOverlay>
       </DndContext>
+
+      {/* Demo component for testing draggable buttons */}
+      <DraggableFloatingButtonDemo />
     </AppLayout>
   );
 }

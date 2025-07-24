@@ -58,6 +58,9 @@
   width: 100%;
   min-height: 0; /* Importante para flex children */
 
+  /* ALTURA COMPLETA EN MOBILE - Llegar hasta el final del viewport */
+  height: 100%;
+
   /* iOS Safari optimizations */
   -webkit-overflow-scrolling: touch;
   transform: translateZ(0);
@@ -75,6 +78,9 @@
   flex-direction: column;
   /* Sin border-radius en mobile para que llegue hasta los bordes */
   overflow: hidden; /* Sin scroll en el contenedor principal */
+
+  /* FONDO GRIS - Aplicar en todas las resoluciones */
+  background-color: #f3f4f6;
 
   /* Sin padding en mobile para que el fondo llegue completamente a los bordes */
   padding: 0;
@@ -434,6 +440,51 @@ ul[class*="list__container"] {
     overflow-x: hidden;
   }
 
+  /* FORZAR ALTURA COMPLETA para .home - Llegar hasta el final de app-main-content */
+  .home {
+    height: 100% !important;
+    min-height: 100% !important;
+  }
+
+  /* FORZAR ALTURA COMPLETA para .home__content - Llegar hasta el final de .home */
+  .home__content {
+    height: 100% !important;
+    min-height: 100% !important;
+  }
+
+  /* FORZAR ALTURA COMPLETA para .home__content-main - Llegar hasta el final de .home__content */
+  .home__content-main {
+    height: 100% !important;
+    min-height: 100% !important;
+  }
+
+  /* FORZAR ALTURA COMPLETA para .lists-container - Llegar hasta el final de .home__content-main */
+  .lists-container {
+    height: 100% !important;
+    min-height: 100% !important;
+  }
+
+  /* FORZAR ALTURA COMPLETA - Solo para navegadores NO iOS Safari */
+  body:not(.ios-safari) .home {
+    min-height: calc(
+      var(--vh, 1vh) * 100
+    ) !important; /* Usar variable CSS del viewport fix */
+    height: calc(var(--vh, 1vh) * 100) !important;
+  }
+
+  body:not(.ios-safari) .home__content {
+    flex: 1 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+  }
+
+  body:not(.ios-safari) .home__content-main {
+    flex: 1 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    background-color: #f3f4f6 !important; /* Asegurar fondo gris */
+  }
+
   /* Reducir padding del contenido principal en mobile para maximizar altura de listas */
   .home__content-main {
     padding: 0.125rem !important; /* Aún más reducido */
@@ -449,6 +500,8 @@ ul[class*="list__container"] {
     display: flex !important;
     flex-direction: column !important;
     overflow: hidden !important;
+    height: 100% !important; /* Ocupar toda la altura del contenedor padre */
+    min-height: 100% !important;
   }
 
   /* Sobrescribir clases específicas de Tailwind en el contenedor de listas */
@@ -544,7 +597,7 @@ ul[class*="list__container"] {
   /* REGLA ULTRA-ESPECÍFICA: Solo para navegadores NO iOS Safari en mobile */
   @media (max-width: 640px) {
     body:not(.ios-safari) .lists-container {
-      min-height: 90vh !important; /* Al menos 90% del viewport */
+      min-height: 60vh !important; /* Al menos 60% del viewport */
     }
 
     body:not(.ios-safari) .list-container {
@@ -559,9 +612,29 @@ ul[class*="list__container"] {
 
 /* Mobile Android/Chrome específico - FLEXBOX CON ALTURAS MÍNIMAS */
 /* Clase que se aplicará vía JavaScript para navegadores no-iOS */
+.non-ios-mobile .home {
+  height: 100% !important; /* Ocupar toda la altura de app-main-content */
+  min-height: 100% !important;
+  height: calc(var(--vh, 1vh) * 100) !important;
+}
+
+.non-ios-mobile .home__content {
+  flex: 1 !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  min-height: 100% !important; /* Asegurar altura completa */
+}
+
+.non-ios-mobile .home__content-main {
+  flex: 1 !important;
+  background-color: #f3f4f6 !important; /* Asegurar fondo gris */
+}
+
 .non-ios-mobile .lists-container {
   flex: 1 !important;
   min-height: 450px !important; /* Altura mínima específica */
+  height: 100% !important; /* Ocupar toda la altura disponible */
+  min-height: 100% !important;
 }
 
 .non-ios-mobile .list-container {
@@ -577,9 +650,32 @@ ul[class*="list__container"] {
 /* Fallback: usar viewport width como detector - FLEXBOX CON ALTURAS MÍNIMAS */
 @media (max-width: 640px) and (min-resolution: 1dppx) {
   /* Esto debería aplicarse a la mayoría de Android pero no iOS */
+  body:not(.ios-safari) .home {
+    height: 100% !important; /* Ocupar toda la altura de app-main-content */
+    min-height: 100% !important;
+    min-height: calc(
+      var(--vh, 1vh) * 100
+    ) !important; /* Usar variable CSS del viewport fix */
+    height: calc(var(--vh, 1vh) * 100) !important;
+  }
+
+  body:not(.ios-safari) .home__content {
+    flex: 1 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    min-height: 100% !important; /* Asegurar altura completa */
+  }
+
+  body:not(.ios-safari) .home__content-main {
+    flex: 1 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    background-color: #f3f4f6 !important; /* Asegurar fondo gris */
+  }
+
   body:not(.ios-safari) .lists-container {
     flex: 1 !important;
-    min-height: 90vh !important; /* Al menos 60% del viewport */
+    min-height: 60vh !important; /* Al menos 60% del viewport */
   }
 
   body:not(.ios-safari) .list-container {

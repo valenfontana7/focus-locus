@@ -52,7 +52,18 @@ function TaskEditModal({ open, onClose, task, onSave }) {
     <Modal
       open={open}
       onClose={onClose}
-      title="Editar Tarea"
+      title={
+        <div className="flex items-center">
+          <span>Editar Tarea</span>
+          <svg
+            className="w-4 h-4 ml-2 text-gray-400 drag-icon"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path d="M7 2a1 1 0 000 2h6a1 1 0 100-2H7zM7 8a1 1 0 000 2h6a1 1 0 100-2H7zM7 14a1 1 0 100 2h6a1 1 0 100-2H7z" />
+          </svg>
+        </div>
+      }
       actions={
         <>
           <Button variant="cancel" onClick={onClose} className="mr-2">

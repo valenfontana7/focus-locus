@@ -1,0 +1,165 @@
+/* ===========================================
+   MODALES ARRASTRABLES - ESTILOS
+   =========================================== */
+
+/* Suavizar transiciones para modales arrastrables */
+.draggable-modal {
+  transition: transform 0.1s ease-out, box-shadow 0.2s ease-out;
+}
+
+/* Estado de arrastre - mayor sombra para indicar elevación */
+.draggable-modal.is-dragging {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: scale(1.02);
+}
+
+/* Handle de arrastre - header del modal */
+.modal-drag-handle {
+  transition: background-color 0.15s ease-in-out;
+  position: relative;
+}
+
+.modal-drag-handle:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.modal-drag-handle:active {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Indicador visual de arrastre */
+.modal-drag-handle::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 6px;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.modal-drag-handle:hover::before {
+  opacity: 1;
+}
+
+/* Icono de arrastre personalizado */
+.drag-icon {
+  opacity: 0.6;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.modal-drag-handle:hover .drag-icon {
+  opacity: 1;
+}
+
+/* Texto de ayuda para arrastre */
+.drag-help-text {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  transition: opacity 0.2s ease-in-out;
+  user-select: none;
+  pointer-events: none;
+}
+
+.modal-drag-handle:hover .drag-help-text {
+  opacity: 1;
+}
+
+/* Prevenir selección de texto durante el arrastre */
+.dragging-active {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+/* Animaciones suaves para el modal */
+.modal-enter {
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+.modal-exit {
+  animation: modalFadeOut 0.15s ease-in;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes modalFadeOut {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+}
+
+/* Ajustes específicos para mobile */
+@media (max-width: 640px) {
+  .modal-drag-handle {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .modal-drag-handle::before {
+    top: 8px;
+    width: 40px;
+    height: 4px;
+  }
+
+  .drag-help-text {
+    font-size: 0.7rem;
+  }
+
+  /* En mobile, hacer el área de arrastre más prominente */
+  .modal-drag-handle:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+}
+
+/* Ajustes para tablets */
+@media (min-width: 640px) and (max-width: 1024px) {
+  .modal-drag-handle {
+    padding-top: 0.875rem;
+    padding-bottom: 0.875rem;
+  }
+}
+
+/* Mejoras para accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  .draggable-modal,
+  .modal-drag-handle,
+  .drag-icon,
+  .drag-help-text {
+    transition: none;
+  }
+
+  .modal-enter,
+  .modal-exit {
+    animation: none;
+  }
+}
+
+/* Cursor personalizado durante arrastre global */
+.dragging-cursor {
+  cursor: grabbing !important;
+}
+
+.dragging-cursor * {
+  cursor: grabbing !important;
+}

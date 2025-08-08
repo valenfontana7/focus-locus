@@ -3,11 +3,18 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "vite --host",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "dev": "npm run dev --workspace=@focus-locus/web",
+    "build": "npm run build --workspace=@focus-locus/web",
+    "lint": "npm run lint --workspace=@focus-locus/web",
+    "preview": "npm run preview --workspace=@focus-locus/web",
+    "install-all": "npm install",
+    "mobile": "npm start --workspace=@focus-locus/mobile",
+    "mobile:android": "npm run android --workspace=@focus-locus/mobile",
+    "mobile:ios": "npm run ios --workspace=@focus-locus/mobile"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -15,10 +22,9 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.2.0",
     "@mui/material": "^7.2.0",
-    "@supabase/supabase-js": "^2.52.0",
     "@tailwindcss/vite": "^4.1.11",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
     "react-router-dom": "^7.6.3",
     "tailwindcss": "^4.1.11"
   },

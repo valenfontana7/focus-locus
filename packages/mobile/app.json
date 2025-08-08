@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "Focus Locus Mobile",
+    "slug": "focus-locus-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "scheme": "focuslocus",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.focuslocus.mobile"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.focuslocus.mobile"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": ["expo-web-browser"],
+    "extra": {
+      "supabaseUrl": "https://ljvkuvdejbvkycfizsfo.supabase.co",
+      "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxqdmt1dmRlamJ2a3ljZml6c2ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMyNDMyNzksImV4cCI6MjA2ODgxOTI3OX0.rNG8zL5VMJGFSiHvKfIf2Qa6-00qNapNsxWSmUm_BVU"
+    }
+  }
+}

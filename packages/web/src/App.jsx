@@ -3,8 +3,12 @@ import Home from "./pages/Home";
 import Login from "./components/Login";
 import SyncStatus from "./components/SyncStatus";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-import { ProjectProvider } from "./context/ProjectContext";
-import { AuthProvider, useAuthContext } from "./context/AuthContext";
+import {
+  ProjectProvider,
+  AuthProvider,
+  useAuthContext,
+  SupabaseConfigProvider,
+} from "@focus-locus/core";
 
 // Componente que maneja la lógica de autenticación
 function AppContent() {
@@ -44,11 +48,19 @@ function AppContent() {
 }
 
 function App() {
+  // Configuración de Supabase desde variables de entorno
+  const supabaseConfig = {
+    url: import.meta.env.VITE_SUPABASE_URL,
+    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+  };
+
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
+      <SupabaseConfigProvider config={supabaseConfig}>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </SupabaseConfigProvider>
     </BrowserRouter>
   );
 }

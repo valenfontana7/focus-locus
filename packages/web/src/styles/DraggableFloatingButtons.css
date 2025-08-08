@@ -1,0 +1,213 @@
+/* ===========================================
+   BOTONES FLOTANTES ARRASTRABLES
+   =========================================== */
+
+/* Contenedor principal del botón flotante arrastrable */
+.draggable-floating-btn {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  cursor: grab;
+  position: relative;
+}
+
+.draggable-floating-btn:active {
+  cursor: grabbing;
+}
+
+/* Estado de arrastre */
+.draggable-floating-btn.is-dragging {
+  z-index: 9999 !important;
+  transform-origin: center;
+}
+
+.draggable-floating-btn.is-dragging .floating-btn-content {
+  transform: scale(1.05);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* Contenido del botón */
+.floating-btn-content {
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  position: relative;
+  z-index: 2;
+}
+
+/* Indicador de arrastre */
+.drag-indicator {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.draggable-floating-btn:hover .drag-indicator {
+  opacity: 1;
+}
+
+/* Puntos del indicador */
+.drag-dots {
+  display: flex;
+  gap: 2px;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 3px 6px;
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+}
+
+.dot {
+  width: 3px;
+  height: 3px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.9;
+}
+
+/* Animación de los puntos */
+.draggable-floating-btn:hover .dot:nth-child(1) {
+  animation: dotPulse 1.5s ease-in-out infinite;
+}
+
+.draggable-floating-btn:hover .dot:nth-child(2) {
+  animation: dotPulse 1.5s ease-in-out infinite 0.2s;
+}
+
+.draggable-floating-btn:hover .dot:nth-child(3) {
+  animation: dotPulse 1.5s ease-in-out infinite 0.4s;
+}
+
+.draggable-floating-btn:hover .dot:nth-child(4) {
+  animation: dotPulse 1.5s ease-in-out infinite 0.6s;
+}
+
+@keyframes dotPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+}
+
+/* Efectos hover mejorados */
+.draggable-floating-btn:hover .floating-btn-content {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos específicos para mobile */
+@media (max-width: 640px) {
+  .drag-indicator {
+    top: -6px;
+  }
+
+  .drag-dots {
+    padding: 2px 4px;
+    border-radius: 6px;
+  }
+
+  .dot {
+    width: 2px;
+    height: 2px;
+  }
+
+  /* En mobile, hacer el indicador más visible en hover/touch */
+  .draggable-floating-btn:active .drag-indicator {
+    opacity: 1;
+  }
+}
+
+/* Mejoras para accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  .draggable-floating-btn,
+  .floating-btn-content,
+  .drag-indicator,
+  .dot {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* Cursor personalizado durante arrastre global */
+.dragging-cursor {
+  cursor: grabbing !important;
+}
+
+.dragging-cursor * {
+  cursor: grabbing !important;
+}
+
+/* Estilos específicos para diferentes tipos de botones flotantes */
+
+/* Botón de acciones (plus button) */
+.draggable-floating-btn .floating-btn-content button[title="Acciones"] {
+  transition: all 0.2s ease-out;
+}
+
+.draggable-floating-btn:hover .floating-btn-content button[title="Acciones"] {
+  background-color: rgb(31 41 55); /* hover:bg-gray-800 */
+}
+
+/* Botón de sincronización */
+.draggable-floating-btn .floating-btn-content > div[title*="sync"] {
+  transition: all 0.2s ease-out;
+}
+
+/* Ajustes para el menú desplegable del botón de acciones */
+.draggable-floating-btn .floating-btn-content > div > div[style*="99999"] {
+  /* Asegurar que el menú desplegable esté por encima del indicador de arrastre */
+  z-index: 100000 !important;
+}
+
+/* Prevenir interferencia con el arrastre en elementos internos */
+.floating-btn-content button,
+.floating-btn-content div[role="button"],
+.floating-btn-content [onclick] {
+  pointer-events: auto;
+}
+
+/* Indicador visual cuando el botón ha sido movido de su posición original */
+.draggable-floating-btn.has-custom-position::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: #10b981; /* green-500 */
+  border: 2px solid white;
+  border-radius: 50%;
+  z-index: 3;
+  opacity: 0.8;
+}
+
+/* Tooltip para doble click */
+.draggable-floating-btn[title] {
+  position: relative;
+}
+
+/* Estilo para cuando el botón está en una posición personalizada */
+.draggable-floating-btn.custom-positioned {
+  animation: gentleGlow 2s ease-in-out;
+}
+
+@keyframes gentleGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0.1);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}

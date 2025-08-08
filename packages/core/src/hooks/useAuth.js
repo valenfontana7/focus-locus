@@ -1,14 +1,21 @@
-import { useState, useEffect } from "react";
-import {
-  supabase,
-  isSupabaseConfigured,
-  logSupabaseOperation,
-} from "../lib/supabase";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useSupabaseConfig } from "../context/SupabaseConfigContext";
+import { getSupabaseClient, logSupabaseOperation } from "../lib/supabaseClient";
 
 export function useAuth() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isOnline, setIsOnline] = useState(true);
+
+  // Obtener configuración de Supabase del contexto
+  const supabaseConfig = useSupabaseConfig();
+
+  // Crear cliente Supabase solo si hay configuración (memoizado)
+  const supabase = useMemo(
+    () => getSupabaseClient(supabaseConfig),
+    [supabaseConfig]
+  );
+  const isSupabaseConfigured = useCallback(() => supabase !== null, [supabase]);
 
   useEffect(() => {
     // Si Supabase no está configurado, trabajar en modo offline
@@ -46,7 +53,7 @@ export function useAuth() {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [supabase, isSupabaseConfigured]);
 
   // Función para iniciar sesión con email y contraseña
   const signIn = async (email, password) => {
